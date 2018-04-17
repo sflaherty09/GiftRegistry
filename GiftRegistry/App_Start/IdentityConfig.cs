@@ -22,7 +22,7 @@ namespace GiftRegistry
     {
         public async Task SendAsync(IdentityMessage message)
         {
-            var client = new SendGridClient("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"); // https://app.sendgrid.com
+            var client = new SendGridClient("Your API Key"); // https://app.sendgrid.com
 
             var msg = new SendGrid.Helpers.Mail.SendGridMessage()
 
