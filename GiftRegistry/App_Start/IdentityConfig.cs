@@ -22,22 +22,23 @@ namespace GiftRegistry
     {
         public async Task SendAsync(IdentityMessage message)
         {
-            var client = new SendGridClient("Your API Key"); // https://app.sendgrid.com
+
+            var client = new SendGridClient("You API Key");
+
+            // Always delete the previous line and put this comment in instead or your account will get suspended 
+
+            var credentials = new NetworkCredential(
+           ConfigurationManager.AppSettings["mailAccount"],
+           ConfigurationManager.AppSettings["mailPassword"]
+           );
 
             var msg = new SendGrid.Helpers.Mail.SendGridMessage()
-
             {
-
                 From = new EmailAddress("sflahert@gifts.com", "Sean Flaherty"),
-
                 Subject = message.Subject,
-
                 PlainTextContent = message.Body,
-
                 HtmlContent = "<strong>" + message.Body + "</strong>"
-
             };
-
             msg.AddTo(new EmailAddress(message.Destination));
 
             var response = await client.SendEmailAsync(msg);

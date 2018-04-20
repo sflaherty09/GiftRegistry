@@ -22,6 +22,7 @@ namespace GiftRegistry.Controllers
         {
         }
 
+        
         public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager )
         {
             UserManager = userManager;
@@ -63,6 +64,14 @@ namespace GiftRegistry.Controllers
 
         //
         // POST: /Account/Login
+        /// <summary>
+        /// Verify user login information
+        /// Make sure their email address has been confirmed
+        /// Return appropriate error if any information is incorrect
+        /// </summary>
+        /// <param name="model">The user model being tested</param>
+        /// <param name="returnUrl">Where we are being sent upon successful login</param>
+        /// <returns></returns>
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
@@ -73,6 +82,7 @@ namespace GiftRegistry.Controllers
                 return View(model);
             }
 
+            // Require the user to have a confirmed email before they can log on.
             var user = await UserManager.FindByNameAsync(model.Email);
             if (user != null)
             {
@@ -161,25 +171,35 @@ namespace GiftRegistry.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = model.Name, Email = model.Email, BirthDate = model.BirthDate };
-                var result = await UserManager.CreateAsync(user, model.Password);
-                if (result.Succeeded)
+                if (ModelState.IsValid)
                 {
-                    await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
-                    
-                    // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
-                    // Send an email with this link
-                    string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
-                    var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-                    await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
+                    var user = new ApplicationUser { UserName = model.Email, Email = model.Email, BirthDate = model.BirthDate };
+                    var result = await UserManager.CreateAsync(user, model.Password);
+                    if (result.Succeeded)
+                    {
+                        //  Comment the following line to prevent log in until the user is confirmed.
+                        //  await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
 
-                    ViewBag.Message = "Check your email and confirm your account, you must be confirmed "
-                        + "before you can log in.";
+                        string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
+                        var callbackUrl = Url.Action("ConfirmEmail", "Account",
+                           new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
+                        await UserManager.SendEmailAsync(user.Id, "Confirm your account",
+                           "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
 
-                    //return RedirectToAction("Index", "Home");
-                    return View("Info");
+                        // Uncomment to debug locally 
+                        // TempData["ViewBagLink"] = callbackUrl;
+
+                        ViewBag.Message = "Check your email and confirm your account, you must be confirmed "
+                                        + "before you can log in.";
+
+                        return View("Info");
+                        //return RedirectToAction("Index", "Home");
+                    }
+                    AddErrors(result);
                 }
-                AddErrors(result);
+
+                // If we got this far, something failed, redisplay form
+                return View(model);
             }
 
             // If we got this far, something failed, redisplay form

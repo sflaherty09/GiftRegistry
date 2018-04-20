@@ -63,6 +63,9 @@ namespace GiftRegistry.Models
         public bool RememberMe { get; set; }
     }
 
+    /// <summary>
+    /// The Model we will use to register an account
+    /// </summary>
     public class RegisterViewModel
     {
         [RegularExpression(@"^[A-Z]+[a-zA-Z""'\s-]*$")]
@@ -118,5 +121,30 @@ namespace GiftRegistry.Models
         [EmailAddress]
         [Display(Name = "Email")]
         public string Email { get; set; } 
+    }
+
+    public class GiftList
+    {
+        public int ID { get; set; }
+        [StringLength(60)]
+        [Required]
+        public string GiftName { get; set; }
+        [Range(1, 10)]
+        [Required]
+        public int Rating { get; set; }
+        [RegularExpression(@"^[A-Z]+[a-zA-Z""'\s-]*$")]
+        [Required]
+        [StringLength(30)]
+        public string Category { get; set; }
+        [Range(1, int.MaxValue)]
+        [DataType(DataType.Currency)]
+        [Required]
+        public decimal Price { get; set; }
+        [DataType(DataType.Url)]
+        [Required]
+        public string Link { get; set; }
+
+        public string UserId { get; set; }
+        public bool Bought { get; set; }
     }
 }

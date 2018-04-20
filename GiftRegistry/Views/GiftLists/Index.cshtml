@@ -1,0 +1,67 @@
+﻿@model IEnumerable<GiftRegistry.Models.GiftList>
+    @using Microsoft.AspNet.Identity;
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Your List</h2>
+
+<form asp-controller="GiftsLists" asp-action="Index">
+    <p>
+        <select asp-for="giftCategory" asp-items="Model.categories">
+            <option value="">All</option>
+        </select>
+        Title: <input type="text" name="SearchString">
+        <input type="submit" value="Filter" />
+    </p>
+</form>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.GiftName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Rating)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Category)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Price)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    if (item.UserId == User.Identity.GetUserId() && !item.Bought)
+    {
+    <tr>
+        <td>
+            <a href=@item.Link>
+                @Html.DisplayFor(modelItem => item.GiftName)
+            </a>
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Rating)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Category)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Price)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id = item.ID }) |
+            @Html.ActionLink("Details", "Details", new { id = item.ID }) |
+            @Html.ActionLink("Delete", "Delete", new { id = item.ID })
+        </td>
+    </tr>
+        }
+    }
+
+</table>

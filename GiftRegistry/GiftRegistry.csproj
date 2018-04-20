@@ -222,12 +222,27 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\GiftListsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201804180120547_InitialCreate.cs" />
+    <Compile Include="Migrations\201804180120547_InitialCreate.Designer.cs">
+      <DependentUpon>201804180120547_InitialCreate.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201804180134017_Sean Flaherty.cs" />
+    <Compile Include="Migrations\201804180134017_Sean Flaherty.Designer.cs">
+      <DependentUpon>201804180134017_Sean Flaherty.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201804200336454_SeanFlaherty1.cs" />
+    <Compile Include="Migrations\201804200336454_SeanFlaherty1.Designer.cs">
+      <DependentUpon>201804200336454_SeanFlaherty1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\GiftRegistryContext.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -294,6 +309,12 @@
     <Content Include="Views\Shared\Lockout.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
     <Content Include="Views\Shared\Info.cshtml" />
+    <Content Include="Views\GiftLists\Create.cshtml" />
+    <Content Include="Views\GiftLists\Delete.cshtml" />
+    <Content Include="Views\GiftLists\Details.cshtml" />
+    <Content Include="Views\GiftLists\Edit.cshtml" />
+    <Content Include="Views\GiftLists\Index.cshtml" />
+    <Content Include="Views\Home\AppHome.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -305,6 +326,17 @@
     <Content Include="packages.config" />
     <None Include="Project_Readme.html" />
     <Content Include="Scripts\jquery-1.10.2.min.map" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\201804180120547_InitialCreate.resx">
+      <DependentUpon>201804180120547_InitialCreate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201804180134017_Sean Flaherty.resx">
+      <DependentUpon>201804180134017_Sean Flaherty.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201804200336454_SeanFlaherty1.resx">
+      <DependentUpon>201804200336454_SeanFlaherty1.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
