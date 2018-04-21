@@ -4,6 +4,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
+using System.Collections.Generic;
 
 namespace GiftRegistry.Models
 {
@@ -11,6 +12,7 @@ namespace GiftRegistry.Models
     public class ApplicationUser : IdentityUser
     {
         public DateTime BirthDate { get; internal set; }
+        public string Name { get; internal set; }
 
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser> manager)
         {

@@ -143,6 +143,41 @@ namespace GiftRegistry.Controllers
             return RedirectToAction("Index");
         }
 
+        // GET: GiftLists/BuyGift/5
+        public ActionResult BuyGift(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            GiftList giftList = db.GiftLists.Find(id);
+            if (giftList == null)
+            {
+                return HttpNotFound();
+            }
+            return View(giftList);
+        }
+
+        //POST: GiftLists/BuyGift/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult BuyGift(int id)
+        {
+            GiftList gift = db.GiftLists.Find(id);
+            gift.Bought = true;
+            db.SaveChanges();
+            return RedirectToAction("PublicList");
+        }
+
+        // GET: GiftLists/PublicList
+        public ActionResult PublicList()
+        {
+            var gifts = from g in db.GiftLists
+                        select g;
+
+            return View(gifts.ToList());
+        }
+
         protected override void Dispose(bool disposing)
         {
             if (disposing)

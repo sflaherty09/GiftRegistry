@@ -1,0 +1,15 @@
+﻿@model IEnumerable<GiftRegistry.Models.ApplicationUser>
+    @using Microsoft.AspNet.Identity;
+    @using Microsoft.AspNet.Identity.Owin;
+@{
+    ViewBag.Title = "AddFriend";
+}
+
+<h2>Add Friends</h2>
+@foreach (var item in Model) {
+    if (item.Id != User.Identity.GetUserId())
+    {
+
+        <li>@Html.DisplayFor(modelItem => item.Name)</li>
+    }
+}

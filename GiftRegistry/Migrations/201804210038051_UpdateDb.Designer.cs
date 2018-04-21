@@ -7,13 +7,13 @@ namespace GiftRegistry.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.1.3-40302")]
-    public sealed partial class SeanFlaherty : IMigrationMetadata
+    public sealed partial class UpdateDb : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(SeanFlaherty));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(UpdateDb));
         
         string IMigrationMetadata.Id
         {
-            get { return "201804180134017_Sean Flaherty"; }
+            get { return "201804210038051_UpdateDb"; }
         }
         
         string IMigrationMetadata.Source

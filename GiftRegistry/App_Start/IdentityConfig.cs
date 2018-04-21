@@ -22,7 +22,6 @@ namespace GiftRegistry
     {
         public async Task SendAsync(IdentityMessage message)
         {
-
             var client = new SendGridClient("You API Key");
 
             // Always delete the previous line and put this comment in instead or your account will get suspended 

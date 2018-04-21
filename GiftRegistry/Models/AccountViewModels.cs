@@ -71,6 +71,7 @@ namespace GiftRegistry.Models
         [RegularExpression(@"^[A-Z]+[a-zA-Z""'\s-]*$")]
         [Required]
         [StringLength(60)]
+        [Display(Name = "Name")]
         public string Name { get; set; }
 
         [Required]
@@ -92,6 +93,9 @@ namespace GiftRegistry.Models
         [Display(Name = "Birth Date")]
         [DataType(DataType.Date)]
         public DateTime BirthDate { get; set; }
+
+        // Also include Gender eventually?
+        // Occupation and/or interests???
     }
 
     public class ResetPasswordViewModel
@@ -126,6 +130,7 @@ namespace GiftRegistry.Models
     public class GiftList
     {
         public int ID { get; set; }
+        [Display(Name ="Gift Name")]
         [StringLength(60)]
         [Required]
         public string GiftName { get; set; }
