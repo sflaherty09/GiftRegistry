@@ -317,6 +317,7 @@
     <Content Include="Views\Friends\AddFriend.cshtml" />
     <Content Include="Views\GiftLists\PublicList.cshtml" />
     <Content Include="Views\GiftLists\BuyGift.cshtml" />
+    <Content Include="Views\Friends\ConfirmRequest.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
