@@ -1,12 +1,14 @@
 ﻿@model GiftRegistry.Models.ApplicationUser
+    @using Microsoft.AspNet.Identity;
 
 @{
-    ViewBag.Title = "ConfirmRequest";
+    ViewBag.Title = "SendFriendRequest";
 }
 
 <h1>Confirm Request</h1>
 
 <p>Are you sure you want to add <strong> @Html.DisplayFor(model => model.Name)? </strong></p>
+
 
 @using (Html.BeginForm())
 {

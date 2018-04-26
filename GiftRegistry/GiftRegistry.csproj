@@ -229,20 +229,22 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201804180120547_InitialCreate.cs" />
-    <Compile Include="Migrations\201804180120547_InitialCreate.Designer.cs">
-      <DependentUpon>201804180120547_InitialCreate.cs</DependentUpon>
+    <Compile Include="Migrations\201804252107570_Friends.cs" />
+    <Compile Include="Migrations\201804252107570_Friends.Designer.cs">
+      <DependentUpon>201804252107570_Friends.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201804210038051_UpdateDb.cs" />
-    <Compile Include="Migrations\201804210038051_UpdateDb.Designer.cs">
-      <DependentUpon>201804210038051_UpdateDb.cs</DependentUpon>
+    <Compile Include="Migrations\201804252110070_FriendFix.cs" />
+    <Compile Include="Migrations\201804252110070_FriendFix.Designer.cs">
+      <DependentUpon>201804252110070_FriendFix.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\FriendsContext.cs" />
     <Compile Include="Models\FriendsModel.cs" />
     <Compile Include="Models\GiftRegistryContext.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
+    <Compile Include="Models\UserModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
@@ -313,11 +315,14 @@
     <Content Include="Views\GiftLists\Edit.cshtml" />
     <Content Include="Views\GiftLists\Index.cshtml" />
     <Content Include="Views\Home\AppHome.cshtml" />
-    <Content Include="Views\Friends\Index.cshtml" />
-    <Content Include="Views\Friends\AddFriend.cshtml" />
     <Content Include="Views\GiftLists\PublicList.cshtml" />
     <Content Include="Views\GiftLists\BuyGift.cshtml" />
-    <Content Include="Views\Friends\ConfirmRequest.cshtml" />
+    <Content Include="Views\Friends\AddFriends.cshtml" />
+    <Content Include="Views\Friends\Delete.cshtml" />
+    <Content Include="Views\Friends\Details.cshtml" />
+    <Content Include="Views\Friends\Index.cshtml" />
+    <Content Include="Views\Friends\SendFriendRequest.cshtml" />
+    <Content Include="Views\Friends\FriendRequest.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -331,11 +336,11 @@
     <Content Include="Scripts\jquery-1.10.2.min.map" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201804180120547_InitialCreate.resx">
-      <DependentUpon>201804180120547_InitialCreate.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201804252107570_Friends.resx">
+      <DependentUpon>201804252107570_Friends.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201804210038051_UpdateDb.resx">
-      <DependentUpon>201804210038051_UpdateDb.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201804252110070_FriendFix.resx">
+      <DependentUpon>201804252110070_FriendFix.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

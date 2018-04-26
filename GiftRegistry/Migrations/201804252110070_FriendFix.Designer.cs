@@ -7,13 +7,13 @@ namespace GiftRegistry.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.1.3-40302")]
-    public sealed partial class InitialCreate : IMigrationMetadata
+    public sealed partial class FriendFix : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(InitialCreate));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(FriendFix));
         
         string IMigrationMetadata.Id
         {
-            get { return "201804180120547_InitialCreate"; }
+            get { return "201804252110070_FriendFix"; }
         }
         
         string IMigrationMetadata.Source

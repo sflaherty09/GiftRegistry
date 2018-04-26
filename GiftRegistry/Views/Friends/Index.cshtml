@@ -1,9 +1,80 @@
-﻿
+﻿@model GiftRegistry.Models.UserModel
+   @using Microsoft.AspNet.Identity;
+
 @{
-    ViewBag.Title = "Friends List";
+    ViewBag.Title = "Index";
 }
 
 <h2>Your Friends!</h2>
 
-<p>@Html.ActionLink("Add Friends", "AddFriend", "Friends")</p>
+<p>
+    @Html.ActionLink("Add Friends", "AddFriends")
+</p>
+
+
+@foreach (var friend in Model.Friends) {
+    foreach (var user in Model.AppUser)
+    {
+        if (friend.FriendID1 != User.Identity.GetUserId() && friend.FriendID2 != User.Identity.GetUserId())
+        {
+            continue;
+        }
+
+        if (user.Id == friend.FriendID1 && user.Id != User.Identity.GetUserId())
+        {
+            <h3>@Html.ActionLink(user.Name, "../GiftLists/PublicList", new { userId = user.Id })</h3>
+            @DisplayGiftList(friend.FriendID1);
+        }
+        if (user.Id == friend.FriendID2 && user.Id != User.Identity.GetUserId())
+        {
+            <h3>@Html.ActionLink(user.Name, "../GiftLists/PublicList", new { userId = user.Id })</h3>
+            @DisplayGiftList(friend.FriendID2);
+        }
+    }
+}
+
+   @helper DisplayGiftList(string friendId) {
+        <table class="table">
+            <tr>
+                <th>Gift Name</th>
+                <th>Rating</th>
+                <th>Category</th>
+                <th>Price</th>
+                <th>Bought</th>
+                <th></th>
+            </tr>
+        @foreach (var gift in Model.Gifts)
+        {
+            if (gift.UserId == friendId)
+            {
+            <tr>
+                <td>
+                    <a href=@gift.Link>
+                        @Html.DisplayFor(modelItem => gift.GiftName)
+                    </a>
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => gift.Rating)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => gift.Category)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => gift.Price)
+                </td>
+                @if (gift.Bought == true)
+                {
+                    <td>Yes</td>
+                }
+                else
+                {
+                    <td>No</td>
+                }
+                <td>@Html.ActionLink("Buy", "../GiftLists/BuyGift", new { id = gift.ID })</td>
+            </tr>
+            }
+        }
+
+        </table>
+}
 

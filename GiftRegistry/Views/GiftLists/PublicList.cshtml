@@ -1,5 +1,4 @@
 ﻿@model IEnumerable<GiftRegistry.Models.GiftList>
-@using Microsoft.AspNet.Identity;
 
 @{
     ViewBag.Title = "Public List";
@@ -41,7 +40,7 @@
 
     @foreach (var item in Model)
     {
-        if (item.UserId == User.Identity.GetUserId() && !item.Bought)
+        //if (item.UserId == userId && !item.Bought)
         {
             <tr>
                 <td>

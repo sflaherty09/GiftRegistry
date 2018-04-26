@@ -170,12 +170,10 @@ namespace GiftRegistry.Controllers
         }
 
         // GET: GiftLists/PublicList
-        public ActionResult PublicList()
+        public ActionResult PublicList(int? userId)
         {
-            var gifts = from g in db.GiftLists
-                        select g;
-
-            return View(gifts.ToList());
+            GiftList giftList = db.GiftLists.Find(userId);
+            return View(giftList);
         }
 
         protected override void Dispose(bool disposing)

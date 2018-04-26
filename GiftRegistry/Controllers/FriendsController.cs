@@ -1,66 +1,78 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
 using System.Data;
 using System.Data.Entity;
-using GiftRegistry.Models;
-using Microsoft.AspNet.Identity.Owin;
-using System.Web.Security;
-using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.EntityFramework;
+using System.Linq;
 using System.Net;
-using GiftRegistry.Controllers;
-
-using SendGrid.Helpers;
-using SendGrid;
+using System.Web;
+using System.Web.Mvc;
+using GiftRegistry.Models;
 using SendGrid.Helpers.Mail;
+using SendGrid;
+using Microsoft.AspNet.Identity;
 
 namespace GiftRegistry.Controllers
 {
     public class FriendsController : Controller
     {
+        private FriendsContext db = new FriendsContext();
 
-        private ApplicationDbContext db = new ApplicationDbContext();
+        private GiftRegistryContext giftDb = new GiftRegistryContext();
 
-        private IdentityDbContext db3 = new IdentityDbContext();
-
-        private ApplicationUser db2 = new ApplicationUser();
-
-        private ApplicationUserManager UserManager;
+        private ApplicationDbContext usersDb = new ApplicationDbContext();
 
 
         // GET: Friends
-        [Authorize]
         public ActionResult Index()
         {
-            return View();
+            var appUsers = from u in usersDb.Users
+                        select u;
+
+            UserModel users = new UserModel();
+            users.Friends = db.FriendsModels.ToList();
+            users.Gifts = giftDb.GiftLists.ToList();
+            users.AppUser = appUsers.ToList();
+            return View(users);
         }
 
-        // GET: AddFriend
-        [Authorize]
-        public ActionResult AddFriend()
+        // GET: Friends/Details/5
+        public ActionResult Details(int? id)
         {
-            var users = from u in db.Users
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            FriendsModel friendsModel = db.FriendsModels.Find(id);
+            if (friendsModel == null)
+            {
+                return HttpNotFound();
+            }
+            return View(friendsModel);
+        }
+
+        // GET: Friends/Create
+        [Authorize]
+        public ActionResult AddFriends()
+        {
+            var users = from u in usersDb.Users
                         select u;
 
             return View(users.ToList());
         }
 
         [HttpGet]
-        public ActionResult ConfirmRequest(string id)
+        public ActionResult SendFriendRequest(string id)
         {
             //var user = db3.Users.Find(id);
 
-            
+
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            
 
-            var user = db.Users.Find(id);
+
+            var user = usersDb.Users.Find(id);
 
             //ApplicationUser au = db.Users.Find(id);
 
@@ -73,34 +85,40 @@ namespace GiftRegistry.Controllers
             return View(user);
         }
 
-        // POST: ConfirmRequest
+        // POST: SendFriendRequest
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult ConfirmRequest(string id, string formValue)
+        public ActionResult SendFriendRequest(string id, string response)
         {
+            // var client = new SendGridClient("You API Key");
 
-            if (formValue == "No")
+            // Always delete the previous line and put this comment in instead or your account will get suspended
+            var client = new SendGridClient("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"); // https://app.sendgrid.com
+
+            if (response == "No")
             {
                 return RedirectToAction("AddFriend");
             }
 
-            var client = new SendGridClient("You API Key");
-
-            // Always delete the previous line and put this comment in instead or your account will get suspended
-
-            var user = db.Users.Find(id);
+            var user = usersDb.Users.Find(id);
 
             string friendEmail = user.Email;
 
-            var fromUser = db.Users.Find(User.Identity.GetUserId());
+            var fromUser = usersDb.Users.Find(User.Identity.GetUserId());
 
-            string message = fromUser.Name + " would like to be your friend. Click HERE to accept";
+            //var callBackUrl = Url.Action("ConfirmRequest", "Friends", new { friendId = user.Id }, protocol: Request.Url.Scheme);
 
+            var callBackUrl = Url.Action("FriendRequest", "Friends", new { fromId = User.Identity.GetUserId() }, protocol: Request.Url.Scheme);
+
+            string message = fromUser.Name + " would like to be your friend. Click <a href=\"" + callBackUrl + "\">here</a> to view";
+
+
+            // TEST THIS and create a new View for confirm friend request
 
             var msg = new SendGrid.Helpers.Mail.SendGridMessage()
             {
                 From = new EmailAddress("friends@gifts.com", fromUser.Name),
-                Subject = "Friend Request",
+                Subject = fromUser.Name + " has sent you a friend request",
                 PlainTextContent = message,
                 HtmlContent = "<strong>" + message + "</strong>"
             };
@@ -109,7 +127,82 @@ namespace GiftRegistry.Controllers
             client.SendEmailAsync(msg);
 
 
-            return RedirectToAction("AddFriend");
+            return RedirectToAction("AddFriends");
+        }
+         
+        // ADD VIEW
+        // GET: /FriendRequest
+        [Authorize]
+        public ActionResult FriendRequest(string fromId)
+        {
+            if (fromId == null)
+            {
+                return View("Error");
+            }
+            var user = usersDb.Users.Find(fromId);
+            return View(user);
+        }
+
+        // POST: /FriendRequest
+        [HttpPost]
+        public ActionResult FriendRequest(string fromId, string answer)
+        { 
+            if (answer == "Deny")
+            {
+                return RedirectToAction("Index");
+            }
+
+            if (fromId == null)
+            {
+                return View("Error");
+            }
+
+            FriendsModel friends = new FriendsModel();
+
+            friends.FriendID1 = User.Identity.GetUserId();
+            friends.FriendID2 = fromId;
+            friends.Friend1NotificationFlag = false;
+            friends.Friend2NotificationFlag = false;
+
+            db.FriendsModels.Add(friends);
+            db.SaveChanges();
+
+            return RedirectToAction("Index");
+        }
+
+        // GET: Friends/Delete/5
+        public ActionResult Delete(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            FriendsModel friendsModel = db.FriendsModels.Find(id);
+            if (friendsModel == null)
+            {
+                return HttpNotFound();
+            }
+            return View(friendsModel);
+        }
+
+        // POST: Friends/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public ActionResult DeleteConfirmed(int id)
+        {
+            FriendsModel friendsModel = db.FriendsModels.Find(id);
+            db.FriendsModels.Remove(friendsModel);
+            db.SaveChanges();
+            return RedirectToAction("Index");
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                db.Dispose();
+            }
+            base.Dispose(disposing);
         }
     }
 }

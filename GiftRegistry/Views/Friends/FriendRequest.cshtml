@@ -1,0 +1,19 @@
+﻿@model GiftRegistry.Models.ApplicationUser
+@{
+    ViewBag.Title = "FriendRequest";
+}
+
+<h1>Friend Request</h1>
+
+<p><strong> @Html.DisplayFor(model => model.Name) wants to be your friend! </strong></p>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-actions no-color">
+        <input type="submit" value="Accept" class="btn btn-default" /> |
+        <input type="submit" value="Deny" class="btn btn-default" />
+    </div>
+}
+
