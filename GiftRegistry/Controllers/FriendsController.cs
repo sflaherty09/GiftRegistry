@@ -90,10 +90,9 @@ namespace GiftRegistry.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult SendFriendRequest(string id, string response)
         {
-            // var client = new SendGridClient("You API Key");
+             var client = new SendGridClient("You API Key");
 
-            // Always delete the previous line and put this comment in instead or your account will get suspended
-            var client = new SendGridClient("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"); // https://app.sendgrid.com
+            //Always delete the previous line and put this comment in instead or your account will get suspended
 
             if (response == "No")
             {
