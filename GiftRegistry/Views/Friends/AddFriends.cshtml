@@ -1,12 +1,18 @@
 ﻿@model IEnumerable<GiftRegistry.Models.ApplicationUser>
 @using Microsoft.AspNet.Identity;
-@using Microsoft.AspNet.Identity.Owin;
-@using System.Collections.Generic;
+
 @{
     ViewBag.Title = "AddFriend";
 }
 
 <h2>Add Friends</h2>
+
+<form>
+    <p>
+        Name: <input type="text" name="SearchString">
+        <input type="submit" value="Filter" />
+    </p>
+</form>
 
 <table class="table">
     <tr>
@@ -18,12 +24,18 @@
     </tr>
     @foreach (var item in Model)
     {
-        if (item.Id != User.Identity.GetUserId())
+        if (item.Id != User.Identity.GetUserId() && item.EmailConfirmed)
         {
             int age = DateTime.Now.Year - item.BirthDate.Year;
+            DateTime nextBirthday;
             if (DateTime.Now.Month < item.BirthDate.Month)
             {
+                nextBirthday = item.BirthDate.AddYears(age);
                 age--;
+            }
+            else
+            {
+                nextBirthday = item.BirthDate.AddYears(age + 1);
             }
             string birthday = item.BirthDate.ToString("MMMM dd, yyyy");
 

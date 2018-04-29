@@ -1,73 +1,81 @@
-﻿@model IEnumerable<GiftRegistry.Models.GiftList>
+﻿@model GiftRegistry.Models.UserModel
 
 @{
     ViewBag.Title = "Public List";
 }
 
-<h2>Your List</h2>
 
-<form asp-controller="GiftsLists" asp-action="Index">
-    <p>
-        <select asp-for="giftCategory" asp-items="Model.categories">
-            <option value="">All</option>
-        </select>
-        Title: <input type="text" name="SearchString">
-        <input type="submit" value="Filter" />
-    </p>
-</form>
-
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.GiftName)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Rating)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Category)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Price)
-        </th>
-        <th>
-            Bought?
-        </th>
-        <th>
-            Buy This?
-        </th>
-    </tr>
-
-    @foreach (var item in Model)
+@foreach (var item in Model.AppUser)
+{
+    if (item.Id == Model.UserID)
     {
-        //if (item.UserId == userId && !item.Bought)
+        int age;
+        if (item.BirthDate.Month < DateTime.Now.Month)
         {
-            <tr>
-                <td>
-                    <a href=@item.Link>
-                        @Html.DisplayFor(modelItem => item.GiftName)
-                    </a>
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Rating)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Category)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Price)
-                </td>
-                @if (item.Bought == true)
-                {
-                    <td>Yes</td>
-                }
-                else
-                {
-                    <td>No</td>
-                }
-                <td>@Html.ActionLink("Buy", "BuyGift", new { id = item.ID})</td>
-            </tr>
+            age = DateTime.Now.Year - item.BirthDate.Year;
         }
+        else
+        {
+            age = DateTime.Now.Year - item.BirthDate.Year - 1;
+        }
+        string birthday = item.BirthDate.ToString("MMMM dd, yyyy");
+        <h2>@item.Name's List</h2>
+        <h3>Date of Birth: @birthday, Age: @age</h3>
+
+        <form asp-controller="GiftsLists" asp-action="Index">
+            <p>
+            <select asp-for="giftCategory" asp-items="Model.categories">
+                    <option value="">All</option>
+                </select>
+                Title: <input type="text" name="SearchString">
+                <input type="submit" value="Filter" />
+            </p>
+        </form>
+        <table class="table">
+            <tr>
+                <th>Gift Name</th>
+                <th>Rating</th>
+                <th>Category</th>
+                <th>Price </th>
+                <th>Bought?</th>
+                <th>Buy This?</th>
+            </tr>
+
+                @foreach (var gift in Model.Gifts)
+                {
+                    if (item.Id == gift.UserId)
+                    {
+                    <tr>
+                        <td>
+                            <a href=@gift.Link>
+                                @Html.DisplayFor(modelItem => gift.GiftName)
+                            </a>
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => gift.Rating)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => gift.Category)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => gift.Price)
+                        </td>
+                        @if (gift.Bought == true)
+                        {
+                            <td>Yes</td>
+                            <td><strong>Sorry already purchased!</strong></td>
+                        }
+                        else
+                        {
+                            <td>No</td>
+                            <td>@Html.ActionLink("Buy", "BuyGift", new { id = gift.ID })</td>
+                        }
+                    </tr>
+                    }
+                }
+            </table>
     }
 
-</table>
+}
+
+

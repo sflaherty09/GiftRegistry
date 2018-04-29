@@ -7,6 +7,13 @@
 
 <h2>Your Friends!</h2>
 
+<form asp-controller="FriendsController" asp-action="Index">
+    <p>
+        Name: <input type="text" name="SearchString">
+        <input type="submit" value="Filter" />
+    </p>
+</form>
+
 <p>
     @Html.ActionLink("Add Friends", "AddFriends")
 </p>
@@ -65,12 +72,13 @@
                 @if (gift.Bought == true)
                 {
                     <td>Yes</td>
+                    <td><strong>Sorry already purchased!</strong></td>
                 }
                 else
                 {
                     <td>No</td>
+                    <td>@Html.ActionLink("Buy", "../GiftLists/BuyGift", new { id = gift.ID })</td>
                 }
-                <td>@Html.ActionLink("Buy", "../GiftLists/BuyGift", new { id = gift.ID })</td>
             </tr>
             }
         }

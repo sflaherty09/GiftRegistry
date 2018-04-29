@@ -34,8 +34,14 @@ textarea {
 
 .nav.navbar-nav li a {
    color: black;
+   font-weight: bold;
  }
 
 .nav.navbar-nav a:hover {
  color: grey;
+}
+
+.siteTitle {
+    text-align: center;
+    font-weight: 900;
 }
