@@ -30,11 +30,13 @@
         if (user.Id == friend.FriendID1 && user.Id != User.Identity.GetUserId())
         {
             <h3>@Html.ActionLink(user.Name, "../GiftLists/PublicList", new { userId = user.Id })</h3>
+            <h4>@Html.ActionLink("Delete", "Delete", new { id = friend.ID})</h4>
             @DisplayGiftList(friend.FriendID1);
         }
         if (user.Id == friend.FriendID2 && user.Id != User.Identity.GetUserId())
         {
             <h3>@Html.ActionLink(user.Name, "../GiftLists/PublicList", new { userId = user.Id })</h3>
+            <p>@Html.ActionLink("Delete", "Delete", new { id = friend.ID })</p>
             @DisplayGiftList(friend.FriendID2);
         }
     }
@@ -50,8 +52,10 @@
                 <th>Bought</th>
                 <th></th>
             </tr>
+        @{ /* For the sake of commenting try this*/}
         @foreach (var gift in Model.Gifts)
         {
+            // If the current row has the same id as one of your friends, print their data
             if (gift.UserId == friendId)
             {
             <tr>

@@ -17,6 +17,8 @@ namespace GiftRegistry.Controllers
 
         private ApplicationDbContext userDb = new ApplicationDbContext();
 
+        private FriendsContext friendsDb = new FriendsContext();
+
         /**/
         /*
                 public ActionResult Index(string giftCategory, string searchString)
@@ -74,7 +76,32 @@ namespace GiftRegistry.Controllers
                 gifts = gifts.Where(x => x.Category == giftCategory);
             }
 
+            //CheckForDeletions();
+
             return View(gifts.ToList());
+        }
+
+        public void CheckForDeletions()
+        {
+            UserModel users = new UserModel();
+            users.Friends = friendsDb.FriendsModels.ToList();
+            users.Gifts = db.GiftLists.ToList();
+            users.AppUser = userDb.Users.ToList();
+
+
+            foreach (var u in users.AppUser)
+            {
+                foreach (var g in users.Gifts)
+                {
+                    DateTime thisYearsBirthday = new DateTime(DateTime.Now.Year, u.BirthDate.Month, u.BirthDate.Day);
+                    if (g.UserId == u.Id && thisYearsBirthday > DateTime.Now && g.Bought)
+                    {
+                        GiftList giftList = db.GiftLists.Find(u.Id);
+                        db.GiftLists.Remove(giftList);
+                        db.SaveChanges();
+                    }
+                }
+            }
         }
 
         /**/
@@ -261,6 +288,15 @@ namespace GiftRegistry.Controllers
             users.UserID = userId;
             //GiftList giftList = db.GiftLists.Find(userId);
             return View(users);
+        }
+
+        public ActionResult FriendRecommendation(GiftList recommendation)
+        {
+            if (recommendation == null)
+            {
+                return View("Error");
+            }
+            return View(recommendation);
         }
 
         protected override void Dispose(bool disposing)

@@ -10,6 +10,7 @@ namespace GiftRegistry.Models
         public List<GiftList> Gifts { get; set; }
         public List<FriendsModel> Friends { get; set; }
         public List<ApplicationUser> AppUser { get; set; }
+        
         public string UserID { get; set; }
     }
 }
