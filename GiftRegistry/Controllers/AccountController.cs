@@ -63,6 +63,7 @@ namespace GiftRegistry.Controllers
             SignInManager = signInManager;
         }
 
+        // Sets up the ApplicationSignInManager 
         public ApplicationSignInManager SignInManager
         {
             get
@@ -75,6 +76,7 @@ namespace GiftRegistry.Controllers
             }
         }
 
+        // Sets up the ApplicationUserManager
         public ApplicationUserManager UserManager
         {
             get
@@ -87,7 +89,39 @@ namespace GiftRegistry.Controllers
             }
         }
 
-        //
+        /**/
+        /*
+                public ActionResult Login(string returnUrl)
+                GET Request
+
+        NAME
+
+                Login - Shows in the log in form for the user to be able to login to the app
+
+        SYNOPSIS
+
+                    public ActionResult Login(string returnUrl)
+                    returnUrl             --> where the user will go upon logging in 
+
+        DESCRIPTION
+
+                Shows a form for user to  enter in their password and username so they can 
+                log in to app
+
+        RETURNS
+
+               The Login View
+
+        AUTHOR
+
+                Automatically Generated
+
+        DATE
+
+                1/30/18
+
+        */
+        /**/
         // GET: /Account/Login
         [AllowAnonymous]
         public ActionResult Login(string returnUrl)
@@ -96,16 +130,46 @@ namespace GiftRegistry.Controllers
             return View();
         }
 
-        //
+
+        /**/
+        /*
+                public async Task<ActionResult> Login(LoginViewModel model, string returnUrl)
+                POST Request
+
+        NAME
+
+                Login - Verify user data is correct and that their email is verified so they 
+                can log in and use the app
+
+        SYNOPSIS
+
+                    public async Task<ActionResult> Login(LoginViewModel model, string returnUrl)
+                    returnUrl             --> where the user will go upon logging in 
+                    model                 --> the user that we are trying to verify
+
+        DESCRIPTION
+
+                Goes through user's information and makes sure that this username matches this password
+                and that their email has been verified, if that is good then they can log in
+
+        RETURNS
+
+               Redirect to page they were trying to use if verified
+               Back to login page if info was wrong
+               Sends code if two facter authenticaion is necessary
+               Or lockout page if they have attempted to log in too many times
+
+        AUTHOR
+
+                Automatically Generated and improved by Sean Flaherty
+
+        DATE
+
+                1/30/18
+
+        */
+        /**/
         // POST: /Account/Login
-        /// <summary>
-        /// Verify user login information
-        /// Make sure their email address has been confirmed
-        /// Return appropriate error if any information is incorrect
-        /// </summary>
-        /// <param name="model">The user model being tested</param>
-        /// <param name="returnUrl">Where we are being sent upon successful login</param>
-        /// <returns></returns>
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
@@ -130,7 +194,7 @@ namespace GiftRegistry.Controllers
 
             // This doesn't count login failures towards account lockout
             // To enable password failures to trigger account lockout, change to shouldLockout: true
-            var result = await SignInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, shouldLockout: false);
+            var result = await SignInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, shouldLockout: true);
             switch (result)
             {
                 case SignInStatus.Success:
@@ -189,7 +253,36 @@ namespace GiftRegistry.Controllers
             }
         }
 
-        //
+
+        /**/
+        /*
+                public ActionResult Register()
+                GET Request
+
+        NAME
+
+                Register - Add your user data into the application
+
+
+        DESCRIPTION
+
+                Shows a form for the user to add their information into, allowing them to add themselves to the 
+                user database and be part of the application 
+
+        RETURNS
+
+               The Register View
+
+        AUTHOR
+
+                Automatically Generated
+
+        DATE
+
+                1/30/18
+
+        */
+        /**/
         // GET: /Account/Register
         [AllowAnonymous]
         public ActionResult Register()
@@ -197,7 +290,41 @@ namespace GiftRegistry.Controllers
             return View();
         }
 
-        //
+
+        /**/
+        /*
+                public async Task<ActionResult> Register(RegisterViewModel model)
+                POST Request
+
+        NAME
+
+                Register - Add user data into the database, and send verification email
+
+        SYNOPSIS
+
+                    public async Task<ActionResult> Register(RegisterViewModel model)
+                    model                 --> the user that we are going to add
+
+        DESCRIPTION
+
+                Add all of user data into the model and send a verification email
+                to the user in question so they can verify their email and use their account
+
+        RETURNS
+
+               It should return a page telling us to verify our email
+               If it returns the original form then something has gone wrong
+
+        AUTHOR
+
+                Automatically Generated and improved by Sean Flaherty
+
+        DATE
+
+                1/30/18
+
+        */
+        /**/
         // POST: /Account/Register
         [HttpPost]
         [AllowAnonymous]
@@ -206,48 +333,78 @@ namespace GiftRegistry.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (ModelState.IsValid)
+                var user = new ApplicationUser
                 {
-                    var user = new ApplicationUser
-                    {
-                        UserName = model.Email,
-                        Email = model.Email,
-                        BirthDate = model.BirthDate,
-                        Name = model.Name
-                    };
-                    var result = await UserManager.CreateAsync(user, model.Password);
-                    if (result.Succeeded)
-                    {
-                        //  Comment the following line to prevent log in until the user is confirmed.
-                        //  await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
+                    UserName = model.Email,
+                    Email = model.Email,
+                    BirthDate = model.BirthDate,
+                    Name = model.Name
+                };
+                var result = await UserManager.CreateAsync(user, model.Password);
+                if (result.Succeeded)
+                {
+                    //  Comment the following line to prevent log in until the user is confirmed.
+                    //  await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
 
-                        string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
-                        var callbackUrl = Url.Action("ConfirmEmail", "Account",
-                           new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-                        await UserManager.SendEmailAsync(user.Id, "Confirm your account",
-                           "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
+                    string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
+                    var callbackUrl = Url.Action("ConfirmEmail", "Account",
+                       new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
+                    await UserManager.SendEmailAsync(user.Id, "Confirm your account",
+                       "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
 
-                        // Uncomment to debug locally 
-                        // TempData["ViewBagLink"] = callbackUrl;
+                    // Uncomment to debug locally 
+                    // TempData["ViewBagLink"] = callbackUrl;
 
-                        ViewBag.Message = "Check your email and confirm your account, you must be confirmed "
-                                        + "before you can log in.";
+                    ViewBag.Message = "Check your email and confirm your account, you must be confirmed "
+                                    + "before you can log in.";
 
-                        return View("Info");
-                        //return RedirectToAction("Index", "Home");
-                    }
-                    AddErrors(result);
+                    return View("Info");
+                    //return RedirectToAction("Index", "Home");
                 }
-
-                // If we got this far, something failed, redisplay form
-                return View(model);
+                AddErrors(result);
             }
 
             // If we got this far, something failed, redisplay form
             return View(model);
+
         }
 
-        //
+
+        /**/
+        /*
+                public async Task<ActionResult> ConfirmEmail(string userId, string code)
+                GET Request
+
+        NAME
+
+                ConfirmEmail - Confirm user's email so they can use the application 
+
+        SYNOPSIS
+
+                    public async Task<ActionResult> ConfirmEmail(string userId, string code)
+                    userId                 --> the user's id that needs email confirmed
+                    code                   --> confirmation code
+
+        DESCRIPTION
+
+                Add all of user data into the model and send a verification email
+                to the user in question so they can verify their email and use their account
+
+        RETURNS
+
+               It should return a page telling us to verify our email
+               If it returns the original form then something has gone wrong
+
+        AUTHOR
+
+                Automatically Generated and improved by Sean Flaherty
+
+        DATE
+
+                1/30/18
+
+        */
+        /**/
         // GET: /Account/ConfirmEmail
         [AllowAnonymous]
         public async Task<ActionResult> ConfirmEmail(string userId, string code)
@@ -346,16 +503,6 @@ namespace GiftRegistry.Controllers
             return View();
         }
 
-        //
-        // POST: /Account/ExternalLogin
-        [HttpPost]
-        [AllowAnonymous]
-        [ValidateAntiForgeryToken]
-        public ActionResult ExternalLogin(string provider, string returnUrl)
-        {
-            // Request a redirect to the external login provider
-            return new ChallengeResult(provider, Url.Action("ExternalLoginCallback", "Account", new { ReturnUrl = returnUrl }));
-        }
 
         //
         // GET: /Account/SendCode
@@ -393,74 +540,6 @@ namespace GiftRegistry.Controllers
         }
 
         //
-        // GET: /Account/ExternalLoginCallback
-        [AllowAnonymous]
-        public async Task<ActionResult> ExternalLoginCallback(string returnUrl)
-        {
-            var loginInfo = await AuthenticationManager.GetExternalLoginInfoAsync();
-            if (loginInfo == null)
-            {
-                return RedirectToAction("Login");
-            }
-
-            // Sign in the user with this external login provider if the user already has a login
-            var result = await SignInManager.ExternalSignInAsync(loginInfo, isPersistent: false);
-            switch (result)
-            {
-                case SignInStatus.Success:
-                    return RedirectToLocal(returnUrl);
-                case SignInStatus.LockedOut:
-                    return View("Lockout");
-                case SignInStatus.RequiresVerification:
-                    return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = false });
-                case SignInStatus.Failure:
-                default:
-                    // If the user does not have an account, then prompt the user to create an account
-                    ViewBag.ReturnUrl = returnUrl;
-                    ViewBag.LoginProvider = loginInfo.Login.LoginProvider;
-                    return View("ExternalLoginConfirmation", new ExternalLoginConfirmationViewModel { Email = loginInfo.Email });
-            }
-        }
-
-        //
-        // POST: /Account/ExternalLoginConfirmation
-        [HttpPost]
-        [AllowAnonymous]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> ExternalLoginConfirmation(ExternalLoginConfirmationViewModel model, string returnUrl)
-        {
-            if (User.Identity.IsAuthenticated)
-            {
-                return RedirectToAction("Index", "Manage");
-            }
-
-            if (ModelState.IsValid)
-            {
-                // Get the information about the user from the external login provider
-                var info = await AuthenticationManager.GetExternalLoginInfoAsync();
-                if (info == null)
-                {
-                    return View("ExternalLoginFailure");
-                }
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
-                var result = await UserManager.CreateAsync(user);
-                if (result.Succeeded)
-                {
-                    result = await UserManager.AddLoginAsync(user.Id, info.Login);
-                    if (result.Succeeded)
-                    {
-                        await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
-                        return RedirectToLocal(returnUrl);
-                    }
-                }
-                AddErrors(result);
-            }
-
-            ViewBag.ReturnUrl = returnUrl;
-            return View(model);
-        }
-
-        //
         // POST: /Account/LogOff
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -468,14 +547,6 @@ namespace GiftRegistry.Controllers
         {
             AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
             return RedirectToAction("Index", "Home");
-        }
-
-        //
-        // GET: /Account/ExternalLoginFailure
-        [AllowAnonymous]
-        public ActionResult ExternalLoginFailure()
-        {
-            return View();
         }
 
         // GET: /Account/DeleteAccount

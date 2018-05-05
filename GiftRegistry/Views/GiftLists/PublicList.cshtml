@@ -22,15 +22,18 @@
         <h2>@item.Name's List</h2>
         <h3>Date of Birth: @birthday, Age: @age</h3>
 
-        <form asp-controller="GiftsLists" asp-action="Index">
+        using (Html.BeginForm("PublicList", "GiftLists", FormMethod.Get))
+        {
             <p>
-            <select asp-for="giftCategory" asp-items="Model.categories">
-                    <option value="">All</option>
-                </select>
-                Title: <input type="text" name="SearchString">
-                <input type="submit" value="Filter" />
+                Cateogry: @Html.DropDownList("giftCategory", "All")
+                Title: @Html.TextBox("SearchString")
             </p>
-        </form>
+            <p>
+                Sort by: @Html.DropDownList("sortBy", "None")
+            </p>
+            <p><input type="submit" value="Apply Filters" /></p>
+        }
+
         <table class="table">
             <tr>
                 <th>Gift Name</th>

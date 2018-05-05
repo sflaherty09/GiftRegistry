@@ -1,4 +1,4 @@
-﻿@model IEnumerable<GiftRegistry.Models.ApplicationUser>
+﻿@model GiftRegistry.Models.UserModel
 @using Microsoft.AspNet.Identity;
 
 @{
@@ -22,22 +22,28 @@
         <th>Age</th>
         <th></th>
     </tr>
-    @foreach (var item in Model)
+    @foreach (var item in Model.AppUser)
     {
         if (item.Id != User.Identity.GetUserId() && item.EmailConfirmed)
         {
-            int age = DateTime.Now.Year - item.BirthDate.Year;
-            DateTime nextBirthday;
-            if (DateTime.Now.Month < item.BirthDate.Month)
+            foreach (var friend in Model.Friends)
             {
-                nextBirthday = item.BirthDate.AddYears(age);
-                age--;
-            }
-            else
-            {
-                nextBirthday = item.BirthDate.AddYears(age + 1);
-            }
-            string birthday = item.BirthDate.ToString("MMMM dd, yyyy");
+                // COME BACK HERE
+                if ((friend.FriendID1 == User.Identity.GetUserId() && friend.FriendID2 == item.Id) ||
+                    friend.FriendID2 == User.Identity.GetUserId() && friend.FriendID1 == item.Id)
+                {
+                    continue;
+                }
+
+                else
+                {
+                    int age = DateTime.Now.Year - item.BirthDate.Year;
+                    DateTime nextBirthday = new DateTime(DateTime.Now.Year, item.BirthDate.Month, item.BirthDate.Day);
+                    if (DateTime.Now.Month < item.BirthDate.Month)
+                    {
+                        age--;
+                    }
+                    string birthday = item.BirthDate.ToString("MMMM dd, yyyy");
 
             <tr>
                 <td>
@@ -56,6 +62,8 @@
                     @Html.ActionLink("Add", "SendFriendRequest", new { id = item.Id })
                 </td>
             </tr>
+                }
+            }
         }
     }
 </table>

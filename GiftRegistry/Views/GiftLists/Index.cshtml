@@ -7,15 +7,17 @@
 
 <h2>Your List</h2>
 
-<form asp-controller="GiftsLists" asp-action="Index">
+@using (Html.BeginForm("Index", "GiftLists", FormMethod.Get))
+{
     <p>
-        <select asp-for="giftCategory" asp-items="Model.categories">
-            <option value="">All</option>
-        </select>
-        Title: <input type="text" name="SearchString">
-        <input type="submit" value="Filter" />
+        Category: @Html.DropDownList("giftCategory", "All")
+        Title: @Html.TextBox("SearchString")
     </p>
-</form>
+    <p>
+        Sorty by: @Html.DropDownList("sortBy", "None")
+    </p>
+    <p><input type="submit" value="Apply Filters" /></p>
+}
 
 <p>
     @Html.ActionLink("Create New", "Create")

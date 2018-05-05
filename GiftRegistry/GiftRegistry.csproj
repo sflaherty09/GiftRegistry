@@ -320,7 +320,6 @@
     <Content Include="Views\GiftLists\Details.cshtml" />
     <Content Include="Views\GiftLists\Edit.cshtml" />
     <Content Include="Views\GiftLists\Index.cshtml" />
-    <Content Include="Views\Home\AppHome.cshtml" />
     <Content Include="Views\GiftLists\PublicList.cshtml" />
     <Content Include="Views\GiftLists\BuyGift.cshtml" />
     <Content Include="Views\Friends\AddFriends.cshtml" />
@@ -330,9 +329,9 @@
     <Content Include="Views\Friends\SendFriendRequest.cshtml" />
     <Content Include="Views\Friends\FriendRequest.cshtml" />
     <Content Include="Views\Account\DeleteAccount.cshtml" />
-    <Content Include="Views\Home\Temporary.cshtml" />
     <Content Include="Views\Friends\RecommendToFriend.cshtml" />
     <Content Include="Views\GiftLists\FriendRecommendation.cshtml" />
+    <Content Include="Views\Manage\DeleteAccount.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

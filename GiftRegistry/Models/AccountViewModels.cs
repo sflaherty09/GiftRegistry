@@ -63,9 +63,7 @@ namespace GiftRegistry.Models
         public bool RememberMe { get; set; }
     }
 
-    /// <summary>
-    /// The Model we will use to register an account
-    /// </summary>
+
     public class RegisterViewModel
     {
         [RegularExpression(@"^[A-Z]+[a-zA-Z""'\s-]*$")]
@@ -94,8 +92,6 @@ namespace GiftRegistry.Models
         [DataType(DataType.Date)]
         public DateTime BirthDate { get; set; }
 
-        // Also include Gender eventually?
-        // Occupation and/or interests???
     }
 
     public class ResetPasswordViewModel

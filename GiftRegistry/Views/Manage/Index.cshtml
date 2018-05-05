@@ -23,11 +23,6 @@
             }
             ]
         </dd>
-        <dt>External Logins:</dt>
-        <dd>
-            @Model.Logins.Count [
-            @Html.ActionLink("Manage", "ManageLogins") ]
-        </dd>
         @*
             Phone Numbers can used as a second factor of verification in a two-factor authentication system.
              
@@ -83,5 +78,6 @@
                     }
                 }*@
         </dd>
+        <dd>@Html.ActionLink("Delete Account", "DeleteAccount")</dd>
     </dl>
 </div>

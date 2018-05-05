@@ -14,17 +14,49 @@ using Microsoft.AspNet.Identity;
 
 namespace GiftRegistry.Controllers
 {
-    /// <summary>
-    /// Controller used to interact between Friends Model and the Views for Friends
-    /// </summary>
+    /**/
+    /*
+            public class FriendController : Controller
+
+    NAME
+
+            FriendController - Extends Controller object and handles all
+            communication between the FriendsModel and the appropriate
+            Friends Views
+
+    DESCRIPTION
+
+            Handles all communication between the Friends Model and the 
+            Friends Views, so we are able to validate any changes to the Model,
+            and organize data properly for the Views. 
+
+    RETURNS
+
+           Most methods direct the user to the correct views, with a few helper methods 
+           on the bottom
+
+    AUTHOR
+
+            Sean Flaherty
+
+    DATE
+
+            4/15/18
+
+    */
+    /**/
     public class FriendsController : Controller
     {
-        private FriendsContext db = new FriendsContext();
+        private FriendsContext m_friendsDb = new FriendsContext();
 
         private GiftRegistryContext giftDb = new GiftRegistryContext();
 
         private ApplicationDbContext usersDb = new ApplicationDbContext();
 
+
+        /**************************************************************************************************
+         * METHODS USED TO HANDLE MODEL-VIEW INTERACTIONS                                                 *
+         **************************************************************************************************/
 
         /**/
         /*
@@ -60,6 +92,7 @@ namespace GiftRegistry.Controllers
 
         */
         /**/
+        [Authorize]
         public ActionResult Index(string searchString)
         {
             var appUsers = from u in usersDb.Users
@@ -72,7 +105,7 @@ namespace GiftRegistry.Controllers
             }
 
             UserModel users = new UserModel();
-            users.Friends = db.FriendsModels.ToList();
+            users.Friends = m_friendsDb.FriendsModels.ToList();
             users.Gifts = giftDb.GiftLists.ToList();
             users.AppUser = appUsers.ToList();
             //CheckBirthdays();
@@ -128,7 +161,12 @@ namespace GiftRegistry.Controllers
                 appUsers = appUsers.Where(s => s.Name.Contains(searchString));
             }
 
-            return View(appUsers.ToList());
+            UserModel users = new UserModel();
+            users.AppUser = appUsers.ToList();
+            users.Friends = m_friendsDb.FriendsModels.ToList();
+            users.Gifts = null;
+
+            return View(users);
         }
 
         /**/
@@ -167,6 +205,7 @@ namespace GiftRegistry.Controllers
         */
         /**/
         [HttpGet]
+        [Authorize]
         public ActionResult SendFriendRequest(string id)
         {
             //var user = db3.Users.Find(id);
@@ -229,9 +268,10 @@ namespace GiftRegistry.Controllers
         /**/
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public ActionResult SendFriendRequest(string id, string response)
         {
-             var client = new SendGridClient("You API Key");
+            var client = new SendGridClient("You API Key");
 
             // Always delete the previous line and put this comment in instead or your account will get suspended
 
@@ -350,6 +390,7 @@ namespace GiftRegistry.Controllers
         /**/
         // POST: /FriendRequest
         [HttpPost]
+        [Authorize]
         public ActionResult FriendRequest(string fromId, string answer)
         { 
             if (answer == "Deny")
@@ -369,8 +410,8 @@ namespace GiftRegistry.Controllers
             friends.Friend1NotificationFlag = false;
             friends.Friend2NotificationFlag = false;
 
-            db.FriendsModels.Add(friends);
-            db.SaveChanges();
+            m_friendsDb.FriendsModels.Add(friends);
+            m_friendsDb.SaveChanges();
 
             return RedirectToAction("Index");
         }
@@ -409,13 +450,14 @@ namespace GiftRegistry.Controllers
         */
         /**/
         // GET: Friends/Delete/5
+        [Authorize]
         public ActionResult Delete(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            FriendsModel friendsModel = db.FriendsModels.Find(id);
+            FriendsModel friendsModel = m_friendsDb.FriendsModels.Find(id);
             if (friendsModel == null)
             {
                 return HttpNotFound();
@@ -461,9 +503,9 @@ namespace GiftRegistry.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            FriendsModel friendsModel = db.FriendsModels.Find(id);
-            db.FriendsModels.Remove(friendsModel);
-            db.SaveChanges();
+            FriendsModel friendsModel = m_friendsDb.FriendsModels.Find(id);
+            m_friendsDb.FriendsModels.Remove(friendsModel);
+            m_friendsDb.SaveChanges();
             return RedirectToAction("Index");
         }
 
@@ -498,17 +540,26 @@ namespace GiftRegistry.Controllers
         */
         /**/
         // GET: Friends/RecommendToFriend
+        [Authorize]
         public ActionResult RecommendToFriend()
         {
             return View();
         }
 
         [HttpPost]
+        [Authorize]
         public ActionResult RecommendToFriend([Bind(Include = "ID,GiftName,Rating,Category,Price,Link")] GiftList giftList, string id)
         {
-            var client = new SendGridClient("your api key");
 
-            var callBackUrl = Url.Action("FriendRecommendation", "GiftLists", new { recommendation = giftList}, protocol: Request.Url.Scheme);
+            giftList.UserId = null;
+            giftList.Bought = false;
+            giftDb.GiftLists.Add(giftList);
+            giftDb.SaveChanges();
+            int giftId = giftList.ID;
+
+            var client = new SendGridClient("Your api key");
+
+            var callBackUrl = Url.Action("FriendRecommendation", "GiftLists", new { recommendationId = giftId}, protocol: Request.Url.Scheme);
 
             string message =  "Someone has sent you a recommendation, click <a href=\"" + callBackUrl + "\">here</a> to see what it is!";
 
@@ -525,13 +576,49 @@ namespace GiftRegistry.Controllers
             return RedirectToAction("Index");
         }
 
-        // CHECK BIRTHDAYS
+        /**************************************************************************************************
+         * HELPER METHODS                                                                                 *
+         **************************************************************************************************/
+
+        /**/
+        /*
+                public void CheckBirthdays()
+
+        NAME
+
+                CheckBirthdays - Checks user database to see if there any upcoming
+                birthdays
+
+
+        DESCRIPTION
+
+                Goes through the user database and checks to see if any user's birthdays
+                are two weeks away, by comparing it to DateTime.Now. 
+                If any are friend, it will then go through the friend database and notify
+                all of that user's friends via email that their friend's birthday is coming up soon
+                and they should check out their page to figure out what to get them
+
+        RETURNS
+
+               Nothing, it is a void function. It will redirect to SendBirthdayReminder
+               if notification has to be sent
+
+        AUTHOR
+
+                Sean Flaherty
+
+        DATE
+
+                4/15/18
+
+        */
+        /**/
         public void CheckBirthdays()
         {
             var appUsers = from u in usersDb.Users
                            select u;
 
-            var friends = from f in db.FriendsModels
+            var friends = from f in m_friendsDb.FriendsModels
                           select f;
 
             foreach(var au in appUsers)
@@ -579,10 +666,46 @@ namespace GiftRegistry.Controllers
                         }
                     }
                 }
-                db.SaveChanges();
+                m_friendsDb.SaveChanges();
             }
         }
 
+        /**/
+        /*
+                public void SendBirthdayReminder(string emailAddress, string userName, string userID)
+
+        NAME
+
+                SendBirthdayReminder -  Send Email to user notifiying them that their friend's
+                birthday is coming up
+
+        SYNOPSIS
+
+                    public void SendBirthdayReminder(string emailAddress, string userName, string userID)
+                    emailAddress             --> the email address of the user we will be notifying
+                    userName                 --> the name of the user we will be notifying
+                    userID                   --> the id of the user who's list that you will be directed to 
+
+        DESCRIPTION
+
+                Sends an email to this user letting them know that one of their friend's birthdays is coming up.
+                The email will include a link the their friend's gift list so they can easily view it and 
+                go through to find out what they are getting them.
+
+        RETURNS
+
+               Nothing
+
+        AUTHOR
+
+                Sean Flaherty
+
+        DATE
+
+                4/15/18
+
+        */
+        /**/
         public void SendBirthdayReminder(string emailAddress, string userName, string userID)
         {
             var client = new SendGridClient("YOUR API KEY");
@@ -603,11 +726,43 @@ namespace GiftRegistry.Controllers
 
         }
 
+        /**/
+        /*
+                protected override void Dispose(bool disposing)
+
+        NAME
+
+                Dispose -  Releases resources used, in this case
+                the databases
+
+        SYNOPSIS
+
+                    protected override void Dispose(bool disposing)
+                    disposing             --> boolean value representing if the resources are being disposed
+
+        DESCRIPTION
+
+                Releases resources used by this class
+
+        RETURNS
+
+               Nothing
+
+        AUTHOR
+
+                Automatically generated
+
+        DATE
+
+                4/5/18
+
+        */
+        /**/
         protected override void Dispose(bool disposing)
         {
             if (disposing)
             {
-                db.Dispose();
+                m_friendsDb.Dispose();
             }
             base.Dispose(disposing);
         }
