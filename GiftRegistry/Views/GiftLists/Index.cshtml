@@ -5,23 +5,27 @@
     ViewBag.Title = "Index";
 }
 
-<h2>Your List</h2>
+<div class="userInfo">
+    <h2>Your List</h2>
+</div>
 
-@using (Html.BeginForm("Index", "GiftLists", FormMethod.Get))
+@using (Html.BeginForm("Index", "GiftLists", FormMethod.Get, new {@class ="form-group" }))
 {
+
     <p>
-        Category: @Html.DropDownList("giftCategory", "All")
-        Title: @Html.TextBox("SearchString")
+        <strong>Category:</strong> @Html.DropDownList("giftCategory", (SelectList)ViewBag.giftCategory, new { @class = "form-control" })
+    </p>
+
+    <p>
+        <strong>Name of Gift:</strong> @Html.TextBox("searchString", "", new { @class = "form-control text" })
     </p>
     <p>
-        Sorty by: @Html.DropDownList("sortBy", "None")
+        <strong>Sort By:</strong> @Html.DropDownList("sortBy", (SelectList)ViewBag.sortBy, new { @class = "form-control multiple" })
     </p>
+
     <p><input type="submit" value="Apply Filters" /></p>
 }
 
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
 <table class="table">
     <tr>
         <th>
@@ -40,7 +44,7 @@
     </tr>
 
 @foreach (var item in Model) {
-    if (item.UserId == User.Identity.GetUserId() /*!item.Bought && DateTime.Now < Birthday*/)
+    if (item.UserId == User.Identity.GetUserId())
     {
     <tr>
         <td>
@@ -67,3 +71,7 @@
     }
 
 </table>
+
+<p>
+    @Html.ActionLink("Create New", "Create", null, new { @class = "customButton" })
+</p>

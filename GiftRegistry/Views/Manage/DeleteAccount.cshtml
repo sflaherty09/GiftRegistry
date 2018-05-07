@@ -1,7 +1,10 @@
-﻿
+﻿@using Microsoft.AspNet.Identity;
 @{
     ViewBag.Title = "DeleteAccount";
 }
 
-<h2>DeleteAccount</h2>
+<h2>Are you sure you want to delete your account?</h2>
+
+
+<p>@Html.ActionLink("Yes", "DeleteAccountConfirmed", new { id = User.Identity.GetUserId() })| @Html.ActionLink("No", "Index")</p>
 

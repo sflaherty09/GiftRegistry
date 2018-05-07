@@ -1,4 +1,20 @@
-﻿using System.Web.Mvc;
+﻿/**/
+/*
+    Name:
+
+        HomeController
+    
+    Purpose: 
+        
+        To handle all information being transferred between the Home Model and the Home Views.
+        Each function acts differently depending on whether it is a GET or POST request. It's primary purpose 
+        is to allow user to navigate the home page
+    
+    Author:
+        Sean Flaherty
+ */
+/**/
+using System.Web.Mvc;
 
 namespace GiftRegistry.Controllers
 {

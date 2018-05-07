@@ -1,7 +1,21 @@
-﻿using System;
-using System.Globalization;
+﻿/**/
+/*
+    Name:
+
+        AccountController
+    
+    Purpose: 
+        
+        To handle all information being transferred between the AccountViewModels and the Account Views.
+        Each function acts differently depending on whether it is a GET or POST request. It's primary purpose 
+        is to allow a user to add account information, login, use two factor authentication, fix forgotten passwords etc.
+        Information passed through here will update the model appopriately or help to display information to the View
+    
+    Author:
+        Sean Flaherty
+ */
+/**/
 using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
@@ -210,7 +224,42 @@ namespace GiftRegistry.Controllers
             }
         }
 
-        //
+
+        /**/
+        /*
+                public async Task<ActionResult> VerifyCode(string provider, string returnUrl, bool rememberMe)
+                GET Request
+
+        NAME
+
+                VerifyCode - Verify user identity using confirmation code that was sent to them over text
+
+        SYNOPSIS
+
+                    public async Task<ActionResult> VerifyCode(string provider, string returnUrl, bool rememberMe)
+                    returnUrl             --> where the user will go upon logging in 
+                    provider              --> the provider of the service used to send the messages
+                    rememberMe            --> whether or not the user wants this browser remembered so they can log in easier next time
+
+        DESCRIPTION
+
+                Sends a verification code then sends the user to a page where they can enter it to verify their 
+                account through two factor authentication
+
+        RETURNS
+
+               The VerifyCode View
+
+        AUTHOR
+
+                Automatically Generated
+
+        DATE
+
+                1/30/18
+
+        */
+        /**/
         // GET: /Account/VerifyCode
         [AllowAnonymous]
         public async Task<ActionResult> VerifyCode(string provider, string returnUrl, bool rememberMe)
@@ -223,7 +272,42 @@ namespace GiftRegistry.Controllers
             return View(new VerifyCodeViewModel { Provider = provider, ReturnUrl = returnUrl, RememberMe = rememberMe });
         }
 
-        //
+
+        /**/
+        /*
+                public async Task<ActionResult> VerifyCode(VerifyCodeViewModel model)
+                POST Request
+
+        NAME
+
+                VerifyCode - Verify user identity using confirmation code that was sent to them over text
+
+        SYNOPSIS
+
+                    public async Task<ActionResult> VerifyCode(VerifyCodeViewModel model)
+                    model             --> the model we are testing against
+
+        DESCRIPTION
+
+                Compare the code that was sent to the user with the one they entered if they are the same they can log
+                in otherwise redirect them back to the page so they can enter it again 
+
+        RETURNS
+
+               Redirect to the page they were trying to go to if succeeded
+               Lockout page if they tried too many times
+               Back to the page they entered if they were wrong so they can try again
+
+        AUTHOR
+
+                Automatically Generated
+
+        DATE
+
+                1/30/18
+
+        */
+        /**/
         // POST: /Account/VerifyCode
         [HttpPost]
         [AllowAnonymous]
@@ -417,7 +501,36 @@ namespace GiftRegistry.Controllers
             return View(result.Succeeded ? "ConfirmEmail" : "Error");
         }
 
-        //
+        /**/
+        /*
+                public ActionResult ForgotPassword()
+                GET Request
+
+        NAME
+
+                ForgotPassword - Brings user to a page where they can enter in their account info and
+                get a new password 
+
+
+        DESCRIPTION
+
+                If user has forgotten password we will take them to a page where they can enter in their 
+                account info and reset their password, this brings up the form allowing us to do that 
+
+        RETURNS
+
+               The ForgotPassword View
+
+        AUTHOR
+
+                Automatically Generated
+
+        DATE
+
+                1/30/18
+
+        */
+        /**/
         // GET: /Account/ForgotPassword
         [AllowAnonymous]
         public ActionResult ForgotPassword()
@@ -425,7 +538,42 @@ namespace GiftRegistry.Controllers
             return View();
         }
 
-        //
+
+        /**/
+        /*
+                public async Task<ActionResult> ForgotPassword(ForgotPasswordViewModel model)
+                POST Request
+
+        NAME
+
+                ForgotPassword - Sends user an email with a link to reset their password
+
+        SYNOPSIS
+
+                    public async Task<ActionResult> ForgotPassword(ForgotPasswordViewModel model)
+                    model                 --> the user who's password is forgotten
+
+
+        DESCRIPTION
+
+                Will send an email to the user who has forgotten their password, allowing them
+                to come up with a new one
+
+        RETURNS
+
+               Should send user to confirmation password, will send back to form
+               if something goes wrong
+
+        AUTHOR
+
+                Automatically Generated, improved by Sean Flaherty
+
+        DATE
+
+                1/30/18
+
+        */
+        /**/
         // POST: /Account/ForgotPassword
         [HttpPost]
         [AllowAnonymous]
@@ -453,7 +601,36 @@ namespace GiftRegistry.Controllers
             return View(model);
         }
 
-        //
+
+        /**/
+        /*
+                public ActionResult ForgotPasswordConfirmation()
+                GET Request
+
+        NAME
+
+                ForgotPasswordConfirmation - Page that displays a confirmation that user's password change
+                has been processed
+
+
+        DESCRIPTION
+
+                Displays a page notifying user that their password change request has been processed
+
+        RETURNS
+
+               ForgotPasswordConfirmation View
+
+        AUTHOR
+
+                Automatically Generated
+
+        DATE
+
+                1/30/18
+
+        */
+        /**/
         // GET: /Account/ForgotPasswordConfirmation
         [AllowAnonymous]
         public ActionResult ForgotPasswordConfirmation()
@@ -461,7 +638,39 @@ namespace GiftRegistry.Controllers
             return View();
         }
 
-        //
+        /**/
+        /*
+                public ActionResult ResetPassword(string code)
+                GET Request
+
+        NAME
+
+                ResetPassword - Brings up a form for user to reset their password
+
+        SYNOPSIS
+
+                    public ActionResult ResetPassword(string code)
+                    code                 --> password request confirmation code
+
+
+        DESCRIPTION
+
+                Form for user to reset their password is displayed
+
+        RETURNS
+
+               ResetPassword View
+
+        AUTHOR
+
+                Automatically Generated
+
+        DATE
+
+                1/30/18
+
+        */
+        /**/
         // GET: /Account/ResetPassword
         [AllowAnonymous]
         public ActionResult ResetPassword(string code)
@@ -469,7 +678,42 @@ namespace GiftRegistry.Controllers
             return code == null ? View("Error") : View();
         }
 
-        //
+
+        /**/
+        /*
+                public async Task<ActionResult> ResetPassword(ResetPasswordViewModel model)
+                POST Request
+
+        NAME
+
+                ResetPassword - Processes user's password change
+
+        SYNOPSIS
+
+                    public async Task<ActionResult> ResetPassword(ResetPasswordViewModel model)
+                    model                 --> the user whose password we are gonna change
+
+
+        DESCRIPTION
+
+                Change the user's password as long as this user does in fact exist, 
+                if not bring up the form and have them try again
+
+        RETURNS
+
+               The form if it was filled out incorrectly or the user doesn't exist
+               Confirmation page if done correctly
+
+        AUTHOR
+
+                Automatically Generated
+
+        DATE
+
+                1/30/18
+
+        */
+        /**/
         // POST: /Account/ResetPassword
         [HttpPost]
         [AllowAnonymous]
@@ -495,7 +739,35 @@ namespace GiftRegistry.Controllers
             return View();
         }
 
-        //
+
+        /**/
+        /*
+                public ActionResult ResetPasswordConfirmation()
+                GET Request
+
+        NAME
+
+                ResetPasswordConfirmation - Page that displays a confirmation that user's password has
+                been changed
+
+        DESCRIPTION
+
+                Displays a page notifying user that their password has changed
+
+        RETURNS
+
+               ResetPasswordConfirmation View
+
+        AUTHOR
+
+                Automatically Generated
+
+        DATE
+
+                1/30/18
+
+        */
+        /**/
         // GET: /Account/ResetPasswordConfirmation
         [AllowAnonymous]
         public ActionResult ResetPasswordConfirmation()
@@ -539,7 +811,34 @@ namespace GiftRegistry.Controllers
             return RedirectToAction("VerifyCode", new { Provider = model.SelectedProvider, ReturnUrl = model.ReturnUrl, RememberMe = model.RememberMe });
         }
 
-        //
+
+        /**/
+        /*
+                public ActionResult LogOff()
+                GET Request
+
+        NAME
+
+                LogOff - Log out current user
+
+        DESCRIPTION
+
+                Sign out current user from using the application 
+
+        RETURNS
+
+               Redirects user to homepage no matter where in the app they are
+
+        AUTHOR
+
+                Automatically Generated
+
+        DATE
+
+                1/30/18
+
+        */
+        /**/
         // POST: /Account/LogOff
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -547,12 +846,6 @@ namespace GiftRegistry.Controllers
         {
             AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
             return RedirectToAction("Index", "Home");
-        }
-
-        // GET: /Account/DeleteAccount
-        public ActionResult DeleteAccount()
-        {
-            return View();
         }
 
         private async Task<string> SendEmailConfirmationTokenAsync(string userID, string subject)
@@ -566,6 +859,39 @@ namespace GiftRegistry.Controllers
             return callbackUrl;
         }
 
+
+        /**/
+        /*
+                protected override void Dispose(bool disposing)
+
+        NAME
+
+                Dispose -  Releases resources used, in this case
+                the user manager and sign in manager
+
+        SYNOPSIS
+
+                    protected override void Dispose(bool disposing)
+                    disposing             --> boolean value representing if the resources are being disposed
+
+        DESCRIPTION
+
+                Releases resources used by this class
+
+        RETURNS
+
+               Nothing
+
+        AUTHOR
+
+                Automatically generated
+
+        DATE
+
+                1/30/18
+
+        */
+        /**/
         protected override void Dispose(bool disposing)
         {
             if (disposing)
@@ -587,8 +913,6 @@ namespace GiftRegistry.Controllers
         }
 
         #region Helpers
-        // Used for XSRF protection when adding external logins
-        private const string XsrfKey = "XsrfId";
 
         private IAuthenticationManager AuthenticationManager
         {
@@ -598,6 +922,37 @@ namespace GiftRegistry.Controllers
             }
         }
 
+        /**/
+        /*
+                private void AddErrors(IdentityResult result)
+
+        NAME
+
+                AddErrors -  Add errors to be reported to user 
+
+        SYNOPSIS
+
+                    private void AddErrors(IdentityResult result)
+                    result             --> result of what the user did, will contain errors if something is wrong
+
+        DESCRIPTION
+
+                Adds errors made by user so they can see what they have done wrong trying to log in 
+
+        RETURNS
+
+               Nothing
+
+        AUTHOR
+
+                Automatically generated
+
+        DATE
+
+                1/30/18
+
+        */
+        /**/
         private void AddErrors(IdentityResult result)
         {
             foreach (var error in result.Errors)
@@ -606,6 +961,38 @@ namespace GiftRegistry.Controllers
             }
         }
 
+
+        /**/
+        /*
+                private ActionResult RedirectToLocal(string returnUrl)
+
+        NAME
+
+                RedirectToLocal -  Redirect user to a different page
+
+        SYNOPSIS
+
+                    private ActionResult RedirectToLocal(string returnUrl)
+                    returnUrl             -->  the url the user is trying to go to
+
+        DESCRIPTION
+
+                Redirects user to the page they were trying to access
+
+        RETURNS
+
+               A redirect to the location user was trying to get to
+
+        AUTHOR
+
+                Automatically generated
+
+        DATE
+
+                1/30/18
+
+        */
+        /**/
         private ActionResult RedirectToLocal(string returnUrl)
         {
             if (Url.IsLocalUrl(returnUrl))
@@ -632,16 +1019,6 @@ namespace GiftRegistry.Controllers
             public string LoginProvider { get; set; }
             public string RedirectUri { get; set; }
             public string UserId { get; set; }
-
-            public override void ExecuteResult(ControllerContext context)
-            {
-                var properties = new AuthenticationProperties { RedirectUri = RedirectUri };
-                if (UserId != null)
-                {
-                    properties.Dictionary[XsrfKey] = UserId;
-                }
-                context.HttpContext.GetOwinContext().Authentication.Challenge(properties, LoginProvider);
-            }
 
 
         }

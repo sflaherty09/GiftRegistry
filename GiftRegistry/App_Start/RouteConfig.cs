@@ -1,7 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿/**/
+/*
+    Name:
+
+        RouteConfig
+    
+    Purpose: 
+        
+        Handles where how the user traverses through pages in the app
+    
+    Author:
+        Automatically Generated
+ */
+/**/
 using System.Web.Mvc;
 using System.Web.Routing;
 

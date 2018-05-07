@@ -1,5 +1,6 @@
 ﻿@model GiftRegistry.Models.UserModel
 @using Microsoft.AspNet.Identity;
+@using System.Collections.Generic;
 
 @{
     ViewBag.Title = "AddFriend";
@@ -14,6 +15,10 @@
     </p>
 </form>
 
+@{
+    List<string> usersFriends = GetFriends();
+}
+
 <table class="table">
     <tr>
         <th>Name</th>
@@ -22,35 +27,32 @@
         <th>Age</th>
         <th></th>
     </tr>
-    @foreach (var item in Model.AppUser)
-    {
-        if (item.Id != User.Identity.GetUserId() && item.EmailConfirmed)
-        {
-            foreach (var friend in Model.Friends)
-            {
-                // COME BACK HERE
-                if ((friend.FriendID1 == User.Identity.GetUserId() && friend.FriendID2 == item.Id) ||
-                    friend.FriendID2 == User.Identity.GetUserId() && friend.FriendID1 == item.Id)
-                {
-                    continue;
-                }
 
-                else
-                {
-                    int age = DateTime.Now.Year - item.BirthDate.Year;
-                    DateTime nextBirthday = new DateTime(DateTime.Now.Year, item.BirthDate.Month, item.BirthDate.Day);
-                    if (DateTime.Now.Month < item.BirthDate.Month)
-                    {
-                        age--;
-                    }
-                    string birthday = item.BirthDate.ToString("MMMM dd, yyyy");
+    <!--Go through every user of the application-->
+    @foreach (var au in Model.AppUser)
+    {
+        // If the friend's list contains this id then skip, since we do not want to display them
+        if (usersFriends.Contains(au.Id))
+        {
+            continue;
+        }
+        // If item is not the currently logged in user, and the item is confirmed, display
+        if (au.Id != User.Identity.GetUserId() && au.EmailConfirmed)
+        {
+            int age = DateTime.Now.Year - au.BirthDate.Year;
+            DateTime nextBirthday = new DateTime(DateTime.Now.Year, au.BirthDate.Month, au.BirthDate.Day);
+            if (DateTime.Now.Month < au.BirthDate.Month)
+            {
+                age--;
+            }
+            string birthday = au.BirthDate.ToString("MMMM dd, yyyy");
 
             <tr>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Name)
+                    @Html.DisplayFor(modelItem => au.Name)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Email)
+                    @Html.DisplayFor(modelItem => au.Email)
                 </td>
                 <td>
                     @birthday
@@ -59,11 +61,57 @@
                     @age
                 </td>
                 <td>
-                    @Html.ActionLink("Add", "SendFriendRequest", new { id = item.Id })
+                    @Html.ActionLink("Add", "SendFriendRequest", new { id = au.Id })
                 </td>
             </tr>
-                }
-            }
         }
+
     }
 </table>
+
+@functions { 
+    /**/
+    /*
+            private List<string> GetFriends()
+
+    NAME
+
+            GetFriends - Get all of this user's friends so we don't display them again
+
+
+    DESCRIPTION
+
+            Go through friend's databse and put in all of user's friends so we don't add them twice
+
+    RETURNS
+
+            A list with all of user's friends 
+
+    AUTHOR
+
+            Sean Flaherty
+
+    DATE
+
+            3/20/18
+
+    */
+    /**/
+    private List<string> GetFriends()
+    {
+
+        List<string> friends = new List<string>();
+        foreach (var f in Model.Friends)
+        {
+            if (f.FriendID1 == User.Identity.GetUserId())
+            {
+                friends.Add(f.FriendID2);
+            }
+            else if (f.FriendID2 == User.Identity.GetUserId())
+            {
+                friends.Add(f.FriendID1);
+            }
+        }
+        return friends;
+    }
+}

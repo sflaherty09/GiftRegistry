@@ -1,7 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Entity;
-using System.Linq;
+﻿/**/
+/*
+    Name:
+
+        IdentityConfig
+    
+    Purpose: 
+        
+        To confirm user is who they say they are. Primary purpose is to send 
+        verification emails so that not just anyone can make an account,
+        they must have a valid email address first.  Also sends text messages
+        for two factor authentication
+    
+    Author:
+        Sean Flaherty
+ */
+/**/
+using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Identity;
@@ -14,14 +28,51 @@ using SendGrid;
 using SendGrid.Helpers.Mail;
 using System.Net;
 using System.Configuration;
-using System.Diagnostics;
+using Twilio;
+using Twilio.Rest.Api.V2010.Account;
+using Twilio.Types;
 
 namespace GiftRegistry
 {
     public class EmailService : IIdentityMessageService
     {
+
+        /**/
+        /*
+                public async Task SendAsync(IdentityMessage message)
+
+        NAME
+
+                SendAsync - Send email that deals with confirming user's account
+
+        SYNOPSIS
+
+                    public async Task SendAsync(IdentityMessage message)
+                    message                 --> the message to be set
+
+
+        DESCRIPTION
+
+                Recieves a message and then formats it and sends the email using SendGrid,
+                used for confirming user's account
+
+        RETURNS
+
+               Nothing
+
+        AUTHOR
+
+                Sean Flaherty
+
+        DATE
+
+                2/15/18
+
+        */
+        /**/
         public async Task SendAsync(IdentityMessage message)
         {
+            
 
              var client = new SendGridClient("You API Key");
 
@@ -49,9 +100,61 @@ namespace GiftRegistry
 
     public class SmsService : IIdentityMessageService
     {
+
+        /**/
+        /*
+                public async Task SendAsync(IdentityMessage message)
+
+        NAME
+
+                SendAsync - Send text message that deals with two factor autentication
+
+        SYNOPSIS
+
+                    public async Task SendAsync(IdentityMessage message)
+                    message                 --> the message to be set
+
+
+        DESCRIPTION
+
+                Recieves a message and then formats it and sends the text message using Twilio,
+                used for two factor autentication
+
+        RETURNS
+
+               Nothing
+
+        AUTHOR
+
+                Sean Flaherty
+
+        DATE
+
+                2/15/18
+
+        */
+        /**/
         public Task SendAsync(IdentityMessage message)
         {
-            // Plug in your SMS service here to send a text message.
+            //string accountSid = ConfigurationManager.AppSettings["SMSAccountIdentification"];
+            string accountSid = System.Configuration.ConfigurationManager.AppSettings["SMSAccountIdentification"];
+            string authToken = System.Configuration.ConfigurationManager.AppSettings["SMSAccountPassword"];
+
+            string fromNumber = ConfigurationManager.AppSettings["SMSAccountFrom"];
+
+            // Initialize the Twilio client
+
+            TwilioClient.Init(accountSid, authToken);
+
+            MessageResource result = MessageResource.Create(
+
+                    from: new PhoneNumber(fromNumber),
+
+                    to: new PhoneNumber(message.Destination),
+
+                    body: message.Body);
+
+
             return Task.FromResult(0);
         }
     }

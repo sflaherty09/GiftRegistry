@@ -1,4 +1,21 @@
-﻿using System;
+﻿/**/
+/*
+    Name:
+
+        GiftListsController
+    
+    Purpose: 
+        
+        To handle all information being transferred between the GiftLists Model and the GiftLists Views.
+        Each function acts differently depending on whether it is a GET or POST request. It's primary purpose 
+        is to allow a user to add or delete gifts, display their gifts, and show the different gift lists both private
+        and public. Also handles the automatic deletions of expired gifts
+    
+    Author:
+        Sean Flaherty
+ */
+/**/
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
@@ -60,6 +77,7 @@ namespace GiftRegistry.Controllers
         {
 
             var categoryLst = new List<string>();
+            categoryLst.Add("All");
 
             var categoryQuery = from c in m_giftDb.GiftLists
                                 orderby c.Category
@@ -69,8 +87,9 @@ namespace GiftRegistry.Controllers
             ViewBag.giftCategory = new SelectList(categoryLst);
 
             List<string> sortLst = new List<string>(new string[]
-                {"Price Low-to-High", "Price High-to-Low", "Rating Low-to-High", "Rating High-to-Low" });
+                {"None", "Price Low-to-High", "Price High-to-Low", "Rating Low-to-High", "Rating High-to-Low" });
             ViewBag.sortBy = new SelectList(sortLst);
+
 
             var gifts = from g in m_giftDb.GiftLists
                         select g;
@@ -80,12 +99,12 @@ namespace GiftRegistry.Controllers
                 gifts = gifts.Where(s => s.GiftName.Contains(searchString));
             }
 
-            if (!String.IsNullOrEmpty(giftCategory))
+            if (!String.IsNullOrEmpty(giftCategory) && giftCategory != "All")
             {
                 gifts = gifts.Where(x => x.Category == giftCategory);
             }
 
-            if (!String.IsNullOrEmpty(sortBy))
+            if (!String.IsNullOrEmpty(sortBy) && sortBy != "None")
             {
                 gifts = Sort(sortBy);
             }
@@ -475,27 +494,33 @@ namespace GiftRegistry.Controllers
         /**/
         // GET: GiftLists/PublicList
         [Authorize]
-        public ActionResult PublicList(string userId, string sortBy, string giftCategory)
+        public ActionResult PublicList(string userId, string sortBy, string giftCategory, string searchString)
         {
             var gifts = from g in m_giftDb.GiftLists
                         select g;
 
             var categoryLst = new List<string>();
+            categoryLst.Add("All");
 
             var categoryQuery = from c in m_giftDb.GiftLists
                                 orderby c.Category
                                 select c.Category;
 
             categoryLst.AddRange(categoryQuery.Distinct());
+            
             ViewBag.giftCategory = new SelectList(categoryLst);
 
             List<String> sortLst = new List<string>(new string[]
-            {"Price Low-to-High", "Price High-to-Low", "Rating Low-to-High", "Rating High-to-Low" });
+            {"None", "Price Low-to-High", "Price High-to-Low", "Rating Low-to-High", "Rating High-to-Low" });
             ViewBag.sortBy = new SelectList(sortLst);
 
             if (!String.IsNullOrEmpty(userId))
             {
                 gifts = gifts.Where(s => s.UserId.Contains(userId));
+            }
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                gifts = gifts.Where(s => s.GiftName.Contains(searchString));
             }
 
             if (!String.IsNullOrEmpty(giftCategory))
@@ -721,7 +746,7 @@ namespace GiftRegistry.Controllers
 
         /**/
         /*
-                public IQueryable<GiftList> Sort(string sortQuery)
+                private IQueryable<GiftList> Sort(string sortQuery)
 
         NAME
 
@@ -729,7 +754,7 @@ namespace GiftRegistry.Controllers
 
         SYNOPSIS
 
-                    public IQueryable<GiftList> Sort(string sortQuery)
+                    private IQueryable<GiftList> Sort(string sortQuery)
                     sortQuery          --> how the user would like the gift list sorted
 
         DESCRIPTION
@@ -751,7 +776,7 @@ namespace GiftRegistry.Controllers
 
         */
         /**/
-        public IQueryable<GiftList> Sort(string sortQuery)
+        private IQueryable<GiftList> Sort(string sortQuery)
         {
             IQueryable<GiftList> refine;
             switch (sortQuery)
@@ -786,7 +811,7 @@ namespace GiftRegistry.Controllers
 
         /**/
         /*
-                public void CheckForDeletions()
+                private void CheckForDeletions()
 
         NAME
 
@@ -795,7 +820,7 @@ namespace GiftRegistry.Controllers
 
         SYNOPSIS
 
-                    public void CheckForDeletions()
+                    private void CheckForDeletions()
                     nothing is passed into it
 
         DESCRIPTION
@@ -817,7 +842,7 @@ namespace GiftRegistry.Controllers
 
         */
         /**/
-        public void CheckForDeletions()
+        private void CheckForDeletions()
         {
             UserModel users = new UserModel();
             users.Friends = m_friendsDb.FriendsModels.ToList();
@@ -830,7 +855,7 @@ namespace GiftRegistry.Controllers
                 foreach (var g in users.Gifts)
                 {
                     DateTime thisYearsBirthday = new DateTime(DateTime.Now.Year, u.BirthDate.Month, u.BirthDate.Day);
-                    if (g.UserId == u.Id && thisYearsBirthday > DateTime.Now && g.Bought)
+                    if (g.UserId == u.Id && thisYearsBirthday < DateTime.Now && g.Bought)
                     {
                         int giftId = g.ID;
                         GiftList giftList = m_giftDb.GiftLists.Find(giftId);
@@ -879,6 +904,8 @@ namespace GiftRegistry.Controllers
             if (disposing)
             {
                 m_giftDb.Dispose();
+                m_friendsDb.Dispose();
+                m_userDb.Dispose();
             }
             base.Dispose(disposing);
         }

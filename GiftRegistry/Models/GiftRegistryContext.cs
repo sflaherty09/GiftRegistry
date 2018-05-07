@@ -6,6 +6,21 @@ using System.Web;
 
 namespace GiftRegistry.Models
 {
+    /**/
+    /*
+       Name
+              GiftRegistryContext
+           
+       Purpose
+              Allows us to access all the gift list informaton from the database
+           
+       Author
+              Sean Flaherty
+           
+       Date
+              1/30/2018
+     */
+    /**/
     public class GiftRegistryContext : DbContext
     {
         // You can add custom code to this file. Changes will not be overwritten.

@@ -56,7 +56,7 @@
 
         <div class="form-actions no-color">
             <input type="submit" value="Yes" class="btn btn-default" /> |
-            @Html.ActionLink("Nevermind", "PublicList")
+            @Html.ActionLink("Nevermind", "PublicList", new { userId = Model.UserId})
         </div>
     }
 </div>

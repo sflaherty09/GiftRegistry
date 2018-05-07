@@ -15,33 +15,37 @@
 </form>
 
 <p>
-    @Html.ActionLink("Add Friends", "AddFriends")
+    @Html.ActionLink("Add Friends", "AddFriends", null, new { @class = "customButton" })
 </p>
 
-
+<!-- Go through every entry in the friend's databse-->
 @foreach (var friend in Model.Friends) {
+    // Compare those to every user in the application user database
     foreach (var user in Model.AppUser)
     {
+        // If neither entry in the friend's database is the user who is currently logged in skip this entry
         if (friend.FriendID1 != User.Identity.GetUserId() && friend.FriendID2 != User.Identity.GetUserId())
         {
             continue;
         }
 
+        // Display the user's information
         if (user.Id == friend.FriendID1 && user.Id != User.Identity.GetUserId())
         {
             <h3>@Html.ActionLink(user.Name, "../GiftLists/PublicList", new { userId = user.Id })</h3>
-            <h4>@Html.ActionLink("Delete", "Delete", new { id = friend.ID})</h4>
+            <p>@Html.ActionLink("Delete", "Delete", new { id = friend.ID}, new { @class = "negativeCustomButton" })</p>
             @DisplayGiftList(friend.FriendID1);
         }
         if (user.Id == friend.FriendID2 && user.Id != User.Identity.GetUserId())
         {
             <h3>@Html.ActionLink(user.Name, "../GiftLists/PublicList", new { userId = user.Id })</h3>
-            <p>@Html.ActionLink("Delete", "Delete", new { id = friend.ID })</p>
+            <p>@Html.ActionLink("Delete", "Delete", new { id = friend.ID }, new { @class = "negativeCustomButton" })</p>
             @DisplayGiftList(friend.FriendID2);
         }
     }
 }
 
+    <!-- Display this user's gift table -->
    @helper DisplayGiftList(string friendId) {
         <table class="table">
             <tr>
@@ -52,7 +56,6 @@
                 <th>Bought</th>
                 <th></th>
             </tr>
-        @{ /* For the sake of commenting try this*/}
         @foreach (var gift in Model.Gifts)
         {
             // If the current row has the same id as one of your friends, print their data
@@ -81,7 +84,7 @@
                 else
                 {
                     <td>No</td>
-                    <td>@Html.ActionLink("Buy", "../GiftLists/BuyGift", new { id = gift.ID })</td>
+                    <td>@Html.ActionLink("Buy", "../GiftLists/BuyGift", new { id = gift.ID }, new { @class = "customTableButton"})</td>
                 }
             </tr>
             }

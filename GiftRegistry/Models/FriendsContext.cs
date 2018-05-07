@@ -6,6 +6,21 @@ using System.Web;
 
 namespace GiftRegistry.Models
 {
+    /**/
+    /*
+       Name
+              FriendsContext
+           
+       Purpose
+              Allows us to access all the friend informaton from the database
+           
+       Author
+              Sean Flaherty
+           
+       Date
+              3/30/2018
+     */
+    /**/
     public class FriendsContext : DbContext
     {
         // You can add custom code to this file. Changes will not be overwritten.

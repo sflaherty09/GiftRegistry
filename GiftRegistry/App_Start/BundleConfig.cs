@@ -1,4 +1,17 @@
-﻿using System.Web;
+﻿/**/
+/*
+    Name:
+
+        BundleConfig
+    
+    Purpose: 
+        
+        Handles all the files being bundled into this project
+    
+    Author:
+        Sean Flaherty
+ */
+/**/
 using System.Web.Optimization;
 
 namespace GiftRegistry
@@ -8,9 +21,11 @@ namespace GiftRegistry
         // For more information on bundling, visit http://go.microsoft.com/fwlink/?LinkId=301862
         public static void RegisterBundles(BundleCollection bundles)
         {
+            // Allows us to use jquery
             bundles.Add(new ScriptBundle("~/bundles/jquery").Include(
                         "~/Scripts/jquery-{version}.js"));
 
+            // allows us to use jquery
             bundles.Add(new ScriptBundle("~/bundles/jqueryval").Include(
                         "~/Scripts/jquery.validate*"));
 
@@ -19,6 +34,7 @@ namespace GiftRegistry
             bundles.Add(new ScriptBundle("~/bundles/modernizr").Include(
                         "~/Scripts/modernizr-*"));
 
+            // Allows us to use CSS and bootstrap
             bundles.Add(new ScriptBundle("~/bundles/bootstrap").Include(
                       "~/Scripts/bootstrap.js",
                       "~/Scripts/respond.js"));

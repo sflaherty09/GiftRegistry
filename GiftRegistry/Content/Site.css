@@ -45,3 +45,56 @@ textarea {
     text-align: center;
     font-weight: 900;
 }
+
+.siteBanner {
+    background-color: lightblue;
+    height : 500px;
+}
+
+.siteBanner h3 {
+    font-weight : bolder;
+}
+
+.customButton {
+  font: bold 13px Arial;
+  text-decoration: none;
+  background-color: lightblue;
+  color: #333333;
+  padding: 2px 6px 2px 6px;
+  border-top: 2px solid #CCCCCC;
+  border-right: 2px solid #333333;
+  border-bottom: 2px solid #333333;
+  border-left: 2px solid #CCCCCC;
+}
+
+.negativeCustomButton{
+  font: bold 13px Arial;
+  text-decoration: none;
+  background-color: red;
+  color: black;
+  padding: 2px 6px 2px 6px;
+  border-top: 2px solid #CCCCCC;
+  border-right: 2px solid #333333;
+  border-bottom: 2px solid #333333;
+  border-left: 2px solid #CCCCCC;
+}
+
+.customTableButton{
+  font: bold 11px Arial;
+  text-decoration: none;
+  background-color: lightgreen;
+  color: black;
+  padding: 2px 6px 2px 6px;
+  border-top: 2px solid #CCCCCC;
+  border-right: 2px solid #333333;
+  border-bottom: 2px solid #333333;
+  border-left: 2px solid #CCCCCC;
+}
+
+.userInfo {
+    text-align: center;
+    background-color: lightgray;
+    padding-top: 6px;
+    padding-bottom: 20px;
+    padding-left: 2px;
+}

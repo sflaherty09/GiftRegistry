@@ -1,21 +1,40 @@
-﻿using System.Collections.Generic;
+﻿/**/
+/*
+    Name:
+
+        AccountViewModels
+    
+    Purpose: 
+        
+        To handle all information regarding a user's account. Holds log in and registration info,
+        as well as two factor authentication etc. To be added to only be a controller class 
+    
+    Author:
+        Sean Flaherty
+ */
+/**/
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System;
 
 namespace GiftRegistry.Models
 {
-    public class ExternalLoginConfirmationViewModel
-    {
-        [Required]
-        [Display(Name = "Email")]
-        public string Email { get; set; }
-    }
 
-    public class ExternalLoginListViewModel
-    {
-        public string ReturnUrl { get; set; }
-    }
-
+    /**/
+    /*
+       Name
+              SendCodeViewModel
+           
+       Purpose
+              Holds info needed to send code to user's phone for two factor authentication
+           
+       Author
+              Automatically Generated
+           
+       Date
+              1/30/2018
+     */
+    /**/
     public class SendCodeViewModel
     {
         public string SelectedProvider { get; set; }
@@ -24,6 +43,21 @@ namespace GiftRegistry.Models
         public bool RememberMe { get; set; }
     }
 
+    /**/
+    /*
+       Name
+              VefifyCodeViewModel
+           
+       Purpose
+              Vefify the code the user was sent over text message for two factor authentication 
+           
+       Author
+              Automatically Generated
+           
+       Date
+              1/30/2018
+     */
+    /**/
     public class VerifyCodeViewModel
     {
         [Required]
@@ -40,6 +74,21 @@ namespace GiftRegistry.Models
         public bool RememberMe { get; set; }
     }
 
+    /**/
+    /*
+       Name
+              ForgotViewModel
+           
+       Purpose
+              Takes user's email to verify they are a user, then helps them reset their password
+           
+       Author
+              Automatically Generated
+           
+       Date
+              1/30/2018
+     */
+    /**/
     public class ForgotViewModel
     {
         [Required]
@@ -47,6 +96,22 @@ namespace GiftRegistry.Models
         public string Email { get; set; }
     }
 
+
+    /**/
+    /*
+       Name
+              LoginViewModel
+           
+       Purpose
+              Give the user the information they need to log in
+           
+       Author
+              Automatically Generated
+           
+       Date
+              1/30/2018
+     */
+    /**/
     public class LoginViewModel
     {
         [Required]
@@ -64,6 +129,22 @@ namespace GiftRegistry.Models
     }
 
 
+
+    /**/
+    /*
+       Name
+              RegisterViewModel
+           
+       Purpose
+              Presents user with the information they need to register and account
+           
+       Author
+              Automatically Generated
+           
+       Date
+              1/30/2018
+     */
+    /**/
     public class RegisterViewModel
     {
         [RegularExpression(@"^[A-Z]+[a-zA-Z""'\s-]*$")]
@@ -94,6 +175,22 @@ namespace GiftRegistry.Models
 
     }
 
+
+    /**/
+    /*
+       Name
+              ResetPasswordViewModel
+           
+       Purpose
+              Contains the information necessary for user to reset their password
+           
+       Author
+              Automatically Generated
+           
+       Date
+              1/30/2018
+     */
+    /**/
     public class ResetPasswordViewModel
     {
         [Required]
@@ -115,6 +212,22 @@ namespace GiftRegistry.Models
         public string Code { get; set; }
     }
 
+
+    /**/
+    /*
+       Name
+              ForgotPasswordViewModel
+           
+       Purpose
+              Takes user's email to verify they are a user, then helps them reset their password
+           
+       Author
+              Automatically Generated
+           
+       Date
+              1/30/2018
+     */
+    /**/
     public class ForgotPasswordViewModel
     {
         [Required]
@@ -123,6 +236,24 @@ namespace GiftRegistry.Models
         public string Email { get; set; } 
     }
 
+
+
+    /**/
+    /*
+       Name
+              GiftList
+           
+       Purpose
+              Holds all the user's GiftList information, including name, 
+              rating, cateogry, price, and link
+           
+       Author
+              Sean Flaherty
+           
+       Date
+              1/30/2018
+     */
+    /**/
     public class GiftList
     {
         public int ID { get; set; }

@@ -1,4 +1,18 @@
-﻿using System;
+﻿/**/
+/*
+    Name:
+
+        Startup.Auth
+    
+    Purpose: 
+        
+        Handles how the app operates at start up from creating users, to logging in etc
+    
+    Author:
+        Automaticallly Generated
+ */
+/**/
+using System;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;

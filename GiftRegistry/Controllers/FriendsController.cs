@@ -1,10 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
+﻿/**/
+/*
+    Name:
+
+        FriendsController
+    
+    Purpose: 
+        
+        To handle all information being transferred between the FriendsMdoel and the Friends Views.
+        Each function acts differently depending on whether it is a GET or POST request. It's primary purpose 
+        is to allow a user to add or delete friends, displays friends and their lists, and hanldes sending notifications
+        to remind user's of upcoming birthdays
+    
+    Author:
+        Sean Flaherty
+ */
+/**/
+using System;
 using System.Data;
-using System.Data.Entity;
 using System.Linq;
 using System.Net;
-using System.Web;
 using System.Web.Mvc;
 using GiftRegistry.Models;
 using SendGrid.Helpers.Mail;
@@ -49,9 +63,9 @@ namespace GiftRegistry.Controllers
     {
         private FriendsContext m_friendsDb = new FriendsContext();
 
-        private GiftRegistryContext giftDb = new GiftRegistryContext();
+        private GiftRegistryContext m_giftDb = new GiftRegistryContext();
 
-        private ApplicationDbContext usersDb = new ApplicationDbContext();
+        private ApplicationDbContext m_usersDb = new ApplicationDbContext();
 
 
         /**************************************************************************************************
@@ -95,7 +109,7 @@ namespace GiftRegistry.Controllers
         [Authorize]
         public ActionResult Index(string searchString)
         {
-            var appUsers = from u in usersDb.Users
+            var appUsers = from u in m_usersDb.Users
                         select u;
 
 
@@ -106,9 +120,9 @@ namespace GiftRegistry.Controllers
 
             UserModel users = new UserModel();
             users.Friends = m_friendsDb.FriendsModels.ToList();
-            users.Gifts = giftDb.GiftLists.ToList();
+            users.Gifts = m_giftDb.GiftLists.ToList();
             users.AppUser = appUsers.ToList();
-            //CheckBirthdays();
+            CheckBirthdays();
             return View(users);
         }
 
@@ -153,7 +167,7 @@ namespace GiftRegistry.Controllers
         [HttpGet]
         public ActionResult AddFriends(string searchString)
         {
-            var appUsers = from u in usersDb.Users
+            var appUsers = from u in m_usersDb.Users
                         select u;
 
             if (!String.IsNullOrEmpty(searchString))
@@ -217,7 +231,7 @@ namespace GiftRegistry.Controllers
             }
 
 
-            var user = usersDb.Users.Find(id);
+            var user = m_usersDb.Users.Find(id);
 
             //ApplicationUser au = db.Users.Find(id);
 
@@ -274,17 +288,18 @@ namespace GiftRegistry.Controllers
             var client = new SendGridClient("You API Key");
 
             // Always delete the previous line and put this comment in instead or your account will get suspended
+            
 
             if (response == "No")
             {
                 return RedirectToAction("AddFriend");
             }
 
-            var user = usersDb.Users.Find(id);
+            var user = m_usersDb.Users.Find(id);
 
             string friendEmail = user.Email;
 
-            var fromUser = usersDb.Users.Find(User.Identity.GetUserId());
+            var fromUser = m_usersDb.Users.Find(User.Identity.GetUserId());
 
             var callBackUrl = Url.Action("FriendRequest", "Friends", new { fromId = User.Identity.GetUserId() }, protocol: Request.Url.Scheme);
 
@@ -303,7 +318,7 @@ namespace GiftRegistry.Controllers
             client.SendEmailAsync(msg);
 
 
-            return RedirectToAction("AddFriends");
+            return RedirectToAction("Index");
         }
 
         /**/
@@ -349,7 +364,7 @@ namespace GiftRegistry.Controllers
             {
                 return View("Error");
             }
-            var user = usersDb.Users.Find(fromId);
+            var user = m_usersDb.Users.Find(fromId);
             return View(user);
         }
 
@@ -462,6 +477,17 @@ namespace GiftRegistry.Controllers
             {
                 return HttpNotFound();
             }
+            string friendId;
+            if (friendsModel.FriendID1 == User.Identity.GetUserId())
+            {
+                friendId = friendsModel.FriendID2;
+            }
+            else if (friendsModel.FriendID2 == User.Identity.GetUserId())
+            {
+                friendId = friendsModel.FriendID1;
+            }
+
+            UserModel user = new UserModel();
             return View(friendsModel);
         }
 
@@ -546,6 +572,43 @@ namespace GiftRegistry.Controllers
             return View();
         }
 
+
+        /**/
+        /*
+                public ActionResult RecommendToFriend([Bind(Include = "ID,GiftName,Rating,Category,Price,Link")] GiftList giftList, string id)
+                POST Request
+
+        NAME
+
+                RecommendToFriend -  Recommend a gift idea to a friend
+
+        SYNOPSIS
+
+                    public ActionResult RecommendToFriend([Bind(Include = "ID,GiftName,Rating,Category,Price,Link")] GiftList giftList, string id)
+                    id             --> the id of the user we are sending the recommendtation to
+                    giftList       --> the gift you are recommending to your friend
+
+
+        DESCRIPTION
+
+                Upon verifying the data in the form we will add an entry into the gift's database,
+                but set the user id to null, then send an email to the user in question informing them
+                that someone has sent them a recommendation 
+
+        RETURNS
+
+               A redirect to your friends' page
+
+        AUTHOR
+
+                Sean Flaherty
+
+        DATE
+
+                4/21/18
+
+        */
+        /**/
         [HttpPost]
         [Authorize]
         public ActionResult RecommendToFriend([Bind(Include = "ID,GiftName,Rating,Category,Price,Link")] GiftList giftList, string id)
@@ -553,11 +616,12 @@ namespace GiftRegistry.Controllers
 
             giftList.UserId = null;
             giftList.Bought = false;
-            giftDb.GiftLists.Add(giftList);
-            giftDb.SaveChanges();
+            m_giftDb.GiftLists.Add(giftList);
+            m_giftDb.SaveChanges();
             int giftId = giftList.ID;
+            
 
-            var client = new SendGridClient("Your api key");
+            var client = new SendGridClient("Your Api key");
 
             var callBackUrl = Url.Action("FriendRecommendation", "GiftLists", new { recommendationId = giftId}, protocol: Request.Url.Scheme);
 
@@ -570,7 +634,7 @@ namespace GiftRegistry.Controllers
                 PlainTextContent = message,
                 HtmlContent = "<strong>" + message + "</strong>"
             };
-            msg.AddTo(new EmailAddress(usersDb.Users.Find(id).Email));
+            msg.AddTo(new EmailAddress(m_usersDb.Users.Find(id).Email));
             client.SendEmailAsync(msg);
 
             return RedirectToAction("Index");
@@ -582,7 +646,7 @@ namespace GiftRegistry.Controllers
 
         /**/
         /*
-                public void CheckBirthdays()
+                private void CheckBirthdays()
 
         NAME
 
@@ -613,9 +677,9 @@ namespace GiftRegistry.Controllers
 
         */
         /**/
-        public void CheckBirthdays()
+        private void CheckBirthdays()
         {
-            var appUsers = from u in usersDb.Users
+            var appUsers = from u in m_usersDb.Users
                            select u;
 
             var friends = from f in m_friendsDb.FriendsModels
@@ -635,7 +699,7 @@ namespace GiftRegistry.Controllers
                             // Send Email to f.FriendId2
                             f.Friend2NotificationFlag = true;
 
-                            string sendTo = usersDb.Users.Find(f.FriendID2).Email;
+                            string sendTo = m_usersDb.Users.Find(f.FriendID2).Email;
                             string name = au.Name;
 
                             SendBirthdayReminder(sendTo, name, au.Id);
@@ -645,7 +709,7 @@ namespace GiftRegistry.Controllers
                             // Send Email to f.FriendId1
                             f.Friend1NotificationFlag = true;
 
-                            string sendTo = usersDb.Users.Find(f.FriendID1).Email;
+                            string sendTo = m_usersDb.Users.Find(f.FriendID1).Email;
                             string name = au.Name;
 
                             SendBirthdayReminder(sendTo, name, au.Id);
@@ -666,13 +730,19 @@ namespace GiftRegistry.Controllers
                         }
                     }
                 }
+                else if (thisBirthday == DateTime.Now.Date)
+                {
+                    string sendTo = m_usersDb.Users.Find(au.Id).Email;
+                    string name = au.Name;
+                    SendHappyBirthday(sendTo, name);
+                }
                 m_friendsDb.SaveChanges();
             }
         }
 
         /**/
         /*
-                public void SendBirthdayReminder(string emailAddress, string userName, string userID)
+                private void SendBirthdayReminder(string emailAddress, string userName, string userID)
 
         NAME
 
@@ -706,9 +776,10 @@ namespace GiftRegistry.Controllers
 
         */
         /**/
-        public void SendBirthdayReminder(string emailAddress, string userName, string userID)
+        private void SendBirthdayReminder(string emailAddress, string userName, string userID)
         {
             var client = new SendGridClient("YOUR API KEY");
+            
 
             var callBackUrl = Url.Action("PublicList", "GiftLists", new { userId = userID}, protocol: Request.Url.Scheme);
 
@@ -724,6 +795,58 @@ namespace GiftRegistry.Controllers
             msg.AddTo(new EmailAddress(emailAddress));
             client.SendEmailAsync(msg);
 
+        }
+
+
+        /**/
+        /*
+                private void SendHappyBirtday(string emailAddress, string userName)
+
+        NAME
+
+                SendHappyBirthday -  Send Happy Birthday messaage from app
+
+        SYNOPSIS
+
+                    public void SendBirthdayReminder(string emailAddress, string userName, string userID)
+                    emailAddress             --> the email address of the user we will be saying happy birthday 
+                    userName                 --> the name of the user we will be sending happy birthday  
+
+        DESCRIPTION
+
+                Sends an email to this user wishing them happy birthday 
+
+        RETURNS
+
+               Nothing
+
+        AUTHOR
+
+                Sean Flaherty
+
+        DATE
+
+                4/15/18
+
+        */
+        /**/
+        private void SendHappyBirthday(string emailAddress, string userName)
+        {
+            var client = new SendGridClient("YOUR API KEY");
+            
+
+
+            string message = userName + ", Happy Birhday from GiftRegistry!!!";
+
+            var msg = new SendGrid.Helpers.Mail.SendGridMessage()
+            {
+                From = new EmailAddress("birthday@gifts.com", "GiftRegistry"),
+                Subject = "Happy Birthday!",
+                PlainTextContent = message,
+                HtmlContent = "<strong>" + message + "</strong>"
+            };
+            msg.AddTo(new EmailAddress(emailAddress));
+            client.SendEmailAsync(msg);
         }
 
         /**/
